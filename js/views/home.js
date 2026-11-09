@@ -5,105 +5,105 @@ import { LESSONS } from '../data/lessons.js';
 import { SOUNDS } from '../data/sounds.js';
 import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } from '../ui.js';
 
-  function heatmap(weeks = 22) {
-    const days = getState().days;
-    const end = new Date();
-    const start = new Date(end);
-    start.setDate(end.getDate() - (weeks * 7 - 1));
-    const pad = (start.getDay() + 6) % 7;
-    const cells = [];
-    for (let i = 0; i < pad; i++) cells.push(html`<i class="pad"></i>`);
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const k = dayKey(d), xp = days[k]?.xp || 0;
-      const l = xp === 0 ? 0 : xp < 15 ? 1 : xp < 40 ? 2 : xp < 80 ? 3 : 4;
-      cells.push(html`<i data-l="${l}" class="${k === dayKey() ? 'today' : ''}" title="${d.toLocaleDateString('pt-BR')}: ${xp} XP"></i>`);
-    }
-    return html`<div class="heat">${cells}</div>`;
+function heatmap(weeks = 22) {
+  const days = getState().days;
+  const end = new Date();
+  const start = new Date(end);
+  start.setDate(end.getDate() - (weeks * 7 - 1));
+  const pad = (start.getDay() + 6) % 7;
+  const cells = [];
+  for (let i = 0; i < pad; i++) cells.push(html`<i class="pad"></i>`);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const k = dayKey(d), xp = days[k]?.xp || 0;
+    const l = xp === 0 ? 0 : xp < 15 ? 1 : xp < 40 ? 2 : xp < 80 ? 3 : 4;
+    cells.push(html`<i data-l="${l}" class="${k === dayKey() ? 'today' : ''}" title="${d.toLocaleDateString('pt-BR')}: ${xp} XP"></i>`);
   }
+  return html`<div class="heat">${cells}</div>`;
+}
 
-  export default function render(root) {
-    const st = getState();
-    const t = st.days[dayKey()] || { xp: 0, minutes: 0 };
-    const goal = settings().dailyGoal;
-    const due = dueCount();
-    const fresh = newLeftToday();
-    const c = counts();
-    const nextLesson = LESSONS.find((l) => !st.lessons[l.id]) || LESSONS[0];
-    const lessonsDone = LESSONS.filter((l) => st.lessons[l.id]).length;
-    const sound = pickDaily(SOUNDS, 3);
-    const word = pickDaily(WORDS.filter((w) => w.ex), 7);
-    const slang = pickDaily(DECKS.find((d) => d.id === 'familier').words, 11);
-    const h = new Date().getHours();
-    const hello = h < 5 || h >= 18 ? 'Bonsoir' : 'Bonjour';
-    const name = st.profile.name;
-    const sessionLabel = due + fresh ? `${plural(due, 'revisão', 'revisões')} · ${plural(fresh, 'nova', 'novas')}` : 'Memória sincronizada';
-    const goalReached = t.xp >= goal;
+export default function render(root) {
+  const st = getState();
+  const t = st.days[dayKey()] || { xp: 0, minutes: 0 };
+  const goal = settings().dailyGoal;
+  const due = dueCount();
+  const fresh = newLeftToday();
+  const c = counts();
+  const nextLesson = LESSONS.find((l) => !st.lessons[l.id]) || LESSONS[0];
+  const lessonsDone = LESSONS.filter((l) => st.lessons[l.id]).length;
+  const sound = pickDaily(SOUNDS, 3);
+  const word = pickDaily(WORDS.filter((w) => w.ex), 7);
+  const slang = pickDaily(DECKS.find((d) => d.id === 'familier').words, 11);
+  const h = new Date().getHours();
+  const hello = h < 5 || h >= 18 ? 'Bonsoir' : 'Bonjour';
+  const name = st.profile.name;
+  const sessionLabel = due + fresh ? `${plural(due, 'revisão', 'revisões')} · ${plural(fresh, 'nova', 'novas')}` : 'Memória sincronizada';
+  const goalReached = t.xp >= goal;
 
-    const MODULES = [
-      {
-        idx: '01',
-        tag: 'MÉMOIRE FSRS-5',
-        title: 'Vocabulário & Cartões',
-        desc: due + fresh ? sessionLabel : 'Ciclo do dia concluído — adiante ou revise.',
-        href: '#/review',
-        ico: icon('cards'),
-        accent: true,
-      },
-      {
-        idx: '02',
-        tag: `GRAMMAIRE · ${nextLesson.level}`,
-        title: nextLesson.title,
-        desc: `${nextLesson.sub || 'Ponte estrutural PT → FR'} · ${nextLesson.min} min`,
-        href: `#/lesson/${nextLesson.id}`,
-        ico: icon('book'),
-        done: !!st.lessons[nextLesson.id],
-      },
-      {
-        idx: '03',
-        tag: `PHONÉTIQUE · ${sound.ipa}`,
-        title: `Som: ${sound.title}`,
-        desc: 'Calibragem acústica com avaliação por voz.',
-        href: `#/sound/${sound.id}`,
-        ico: html`<span class="fr" style="font-weight:700;font-size:1.05rem">${sound.sym.slice(0, 3)}</span>`,
-      },
-      {
-        idx: '04',
-        tag: 'CONTRE-LA-MONTRE',
-        title: 'Treino Relâmpago 60s',
-        desc: 'Desafio de reflexo lexical com multiplicador 3x.',
-        href: '#/speed',
-        ico: icon('zap'),
-      },
-      {
-        idx: '05',
-        tag: 'COMPRÉHENSION',
-        title: 'Ditado Auditivo',
-        desc: 'Escuta analítica e precisão ortográfica em 5 frases.',
-        href: '#/listen',
-        ico: icon('headphones'),
-      },
-      {
-        idx: '06',
-        tag: 'CONVERSATION IA',
-        title: 'Role-play com Camille',
-        desc: 'Simulação de cenários reais por voz com correção.',
-        href: '#/tutor',
-        ico: icon('sparkles'),
-      },
-    ];
+  const MODULES = [
+    {
+      idx: '01',
+      tag: 'MÉMOIRE FSRS-5',
+      title: 'Vocabulário & Cartões',
+      desc: due + fresh ? sessionLabel : 'Ciclo do dia concluído — adiante ou revise.',
+      href: '#/review',
+      ico: icon('cards'),
+      accent: true,
+    },
+    {
+      idx: '02',
+      tag: `GRAMMAIRE · ${nextLesson.level}`,
+      title: nextLesson.title,
+      desc: `${nextLesson.sub || 'Ponte estrutural PT → FR'} · ${nextLesson.min} min`,
+      href: `#/lesson/${nextLesson.id}`,
+      ico: icon('book'),
+      done: !!st.lessons[nextLesson.id],
+    },
+    {
+      idx: '03',
+      tag: `PHONÉTIQUE · ${sound.ipa}`,
+      title: `Som: ${sound.title}`,
+      desc: 'Calibragem acústica com avaliação por voz.',
+      href: `#/sound/${sound.id}`,
+      ico: html`<span class="fr" style="font-weight:700;font-size:1.05rem">${sound.sym.slice(0, 3)}</span>`,
+    },
+    {
+      idx: '04',
+      tag: 'CONTRE-LA-MONTRE',
+      title: 'Treino Relâmpago 60s',
+      desc: 'Desafio de reflexo lexical com multiplicador 3x.',
+      href: '#/speed',
+      ico: icon('zap'),
+    },
+    {
+      idx: '05',
+      tag: 'COMPRÉHENSION',
+      title: 'Ditado Auditivo',
+      desc: 'Escuta analítica e precisão ortográfica em 5 frases.',
+      href: '#/listen',
+      ico: icon('headphones'),
+    },
+    {
+      idx: '06',
+      tag: 'CONVERSATION IA',
+      title: 'Role-play com Camille',
+      desc: 'Simulação de cenários reais por voz com correção.',
+      href: '#/tutor',
+      ico: icon('sparkles'),
+    },
+  ];
 
-    mount(root, html`
+  mount(root, html`
     <!-- Editorial Masthead -->
     <section class="editorial-mast">
       <div class="mast-meta">
         <span class="mast-issue">ÉDITION QUOTIDIENNE</span>
         <span class="mast-sep">◆</span>
-        <span class="mast-date">${tapFr(frDate(), frDate())}</span>
-        <span class="mast-status"><i class="pulse-dot"></i> FSRS-5 ACTIF</span>
+        <span class="mast-date">${frDate()}</span>
+        <span class="mast-status"><i class="pulse-dot"></i> Memória FSRS ativa</span>
       </div>
       <div class="mast-headline">
         <h1 class="h1">${hello}${name ? html`, <span class="grad-text">${name}</span>` : ''}<em>.</em></h1>
-        <p class="mast-sub">L'architecture du français construite sur vos ponts cognitifs en portugais et en anglais.</p>
+        <p class="mast-sub">Seu francês construído sobre as pontes que você já tem: o português e o inglês.</p>
       </div>
     </section>
 
@@ -119,14 +119,14 @@ import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } fro
         <div class="command-body">
           <div class="command-dial">
             ${ring(t.xp / goal, {
-      size: 148,
-      sw: 8,
-      label: html`<div class="dial-readout">
+    size: 168,
+    sw: 9,
+    label: html`<div class="dial-readout">
                 <span class="dial-eyebrow">AUJOURD'HUI</span>
                 <b class="dial-val">${t.xp}</b>
                 <span class="dial-sub">/ ${goal} XP</span>
               </div>`,
-    })}
+  })}
           </div>
 
           <div class="command-info">
@@ -272,4 +272,4 @@ import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } fro
       ${heatmap(22)}
     </section>
   `);
-  }
+}

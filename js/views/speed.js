@@ -155,7 +155,7 @@ export default function render(root) {
         </div>
 
         <div class="speed-progress-wrap" style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:20px">
-          <div id="timerBar" style="height:100%;width:${(timeLeft / 60) * 100}%;background:linear-gradient(90deg, #4f5bff, #ff4f74);transition:width 1s linear"></div>
+          <div id="timerBar" style="height:100%;width:${(timeLeft / 60) * 100}%;background:var(--grad);transition:width 1s linear"></div>
         </div>
 
         <section class="card pad-lg center stack" style="min-height:160px;justify-content:center">

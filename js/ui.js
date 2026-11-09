@@ -99,143 +99,142 @@ export const diffView = (words) => html`<div class="diff">${words.map((x) =>
 
 /* ---------- anel de progresso horológico ---------- */
 let ringSeq = 0;
-  export function ring(pct, { size = 136, sw = 8, label = '' } = {}) {
-    const r = (size - sw * 2.6) / 2, outerR = (size - 4) / 2, C = 2 * Math.PI * r, id = `rg${++ringSeq}`, c = size / 2;
-    const clamped = Math.max(0, Math.min(1, pct || 0));
-    const off = C * (1 - clamped);
-    return html`<div class="ring" style="width:${size}px;height:${size}px">
+export function ring(pct, { size = 136, sw = 8, label = '' } = {}) {
+  const r = (size - sw * 2.6) / 2, outerR = (size - 4) / 2, C = 2 * Math.PI * r, id = `rg${++ringSeq}`, c = size / 2;
+  const clamped = Math.max(0, Math.min(1, pct || 0));
+  const off = C * (1 - clamped);
+  return html`<div class="ring" style="width:${size}px;height:${size}px">
     <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
       <defs>
         <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#ffffff"/>
-          <stop offset="28%" stop-color="#fae49d"/>
-          <stop offset="68%" stop-color="#d4af37"/>
-          <stop offset="100%" stop-color="#996e14"/>
+          <stop offset="0%" stop-color="#f7e6ad"/>
+          <stop offset="45%" stop-color="#e2bd5a"/>
+          <stop offset="100%" stop-color="#b08a2e"/>
         </linearGradient>
       </defs>
-      <circle cx="${c}" cy="${c}" r="${outerR}" stroke="rgba(212,175,55,0.22)" stroke-width="3" stroke-dasharray="1.5 6.5"/>
+      <circle cx="${c}" cy="${c}" r="${outerR}" stroke="rgba(226,189,90,0.35)" stroke-width="4" stroke-dasharray="1.2 ${((2 * Math.PI * outerR) / 60 - 1.2).toFixed(2)}"/>
       <circle class="track" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}"/>
       <circle class="val" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}" stroke="url(#${id})" stroke-dasharray="${C}" stroke-dashoffset="${off}" style="--c:${C}"/>
     </svg><div class="label">${label}</div></div>`;
-  }
+}
 
-  /* ---------- teclado de acentos ---------- */
-  const ACCENTS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'û', 'ù', 'ç', 'œ'];
-  export const accentBar = () =>
-    html`<div class="accents" aria-label="Acentos franceses">${ACCENTS.map((a) => html`<button type="button" data-accent="${a}" tabindex="-1">${a}</button>`)}</div>`;
+/* ---------- teclado de acentos ---------- */
+const ACCENTS = ['é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'û', 'ù', 'ç', 'œ'];
+export const accentBar = () =>
+  html`<div class="accents" aria-label="Acentos franceses">${ACCENTS.map((a) => html`<button type="button" data-accent="${a}" tabindex="-1">${a}</button>`)}</div>`;
 
-  /* ---------- toasts ---------- */
-  export function toast(msg, { type = 'info', action, onAction, ms = 3200 } = {}) {
-    const box = document.getElementById('toasts');
-    const el = document.createElement('div');
-    el.className = `toast ${type}`;
-    el.innerHTML = String(html`<span class="dot"></span><span>${msg}</span>${action ? html`<button type="button">${action}</button>` : ''}`);
-    box.append(el);
-    const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 260); };
-    el.querySelector('button')?.addEventListener('click', () => { onAction?.(); close(); });
-    if (ms) setTimeout(close, ms);
-    return close;
-  }
+/* ---------- toasts ---------- */
+export function toast(msg, { type = 'info', action, onAction, ms = 3200 } = {}) {
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = String(html`<span class="dot"></span><span>${msg}</span>${action ? html`<button type="button">${action}</button>` : ''}`);
+  box.append(el);
+  const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 260); };
+  el.querySelector('button')?.addEventListener('click', () => { onAction?.(); close(); });
+  if (ms) setTimeout(close, ms);
+  return close;
+}
 
-  /* ---------- folha inferior ---------- */
-  export function sheet(content, { onClose } = {}) {
-    const d = document.createElement('dialog');
-    d.className = 'sheet';
-    d.innerHTML = `<div class="sheet-grip"></div><div class="sheet-body">${content}</div>`;
-    document.body.append(d);
-    d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
-    d.addEventListener('close', () => { onClose?.(); d.remove(); });
-    d.showModal();
-    return d;
-  }
+/* ---------- folha inferior ---------- */
+export function sheet(content, { onClose } = {}) {
+  const d = document.createElement('dialog');
+  d.className = 'sheet';
+  d.innerHTML = `<div class="sheet-grip"></div><div class="sheet-body">${content}</div>`;
+  document.body.append(d);
+  d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+  d.addEventListener('close', () => { onClose?.(); d.remove(); });
+  d.showModal();
+  return d;
+}
 
-  /* ---------- confete ---------- */
-  export function confetti({ count = 150 } = {}) {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const cv = document.getElementById('confetti');
-    const g = cv.getContext('2d');
-    const W = innerWidth, H = innerHeight, dpr = devicePixelRatio || 1;
-    cv.width = W * dpr; cv.height = H * dpr; g.scale(dpr, dpr);
-    const colors = ['#fae49d', '#d4af37', '#b8860b', '#ffffff', '#e2e8f0', '#94a3b8'];
-    const parts = Array.from({ length: count }, () => ({
-      x: W / 2 + (Math.random() - .5) * 120, y: H * .38,
-      vx: (Math.random() - .5) * 16, vy: -Math.random() * 14 - 5,
-      w: 6 + Math.random() * 6, h: 9 + Math.random() * 8,
-      r: Math.random() * Math.PI, vr: (Math.random() - .5) * .35,
-      color: colors[(Math.random() * colors.length) | 0],
-    }));
-    const t0 = performance.now(), LIFE = 2800;
-    const tick = (now) => {
-      const t = now - t0;
-      g.clearRect(0, 0, W, H);
-      for (const p of parts) {
-        p.vy += .36; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
-        g.save();
-        g.globalAlpha = Math.max(0, 1 - t / LIFE);
-        g.translate(p.x, p.y); g.rotate(p.r);
-        g.fillStyle = p.color;
-        g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)) + 1);
-        g.restore();
-      }
-      if (t < LIFE) requestAnimationFrame(tick); else g.clearRect(0, 0, W, H);
-    };
-    requestAnimationFrame(tick);
-  }
-
-  /* ---------- sons sintetizados e vibração ---------- */
-  let actx = null;
-  function tone(freqs, { dur = .14, type = 'sine', gain = .07, gap = .08 } = {}) {
-    if (!settings().sfx) return;
-    try {
-      actx ||= new (window.AudioContext || window.webkitAudioContext)();
-      const t0 = actx.currentTime + .01;
-      freqs.forEach((f, i) => {
-        const o = actx.createOscillator(), v = actx.createGain(), t = t0 + i * gap;
-        o.type = type; o.frequency.value = f;
-        v.gain.setValueAtTime(0, t);
-        v.gain.linearRampToValueAtTime(gain, t + .012);
-        v.gain.exponentialRampToValueAtTime(.0001, t + dur);
-        o.connect(v).connect(actx.destination);
-        o.start(t); o.stop(t + dur + .03);
-      });
-    } catch { /* áudio indisponível */ }
-  }
-  export const sfx = {
-    ok: () => tone([659.3, 987.8], { type: 'triangle', dur: .18 }),
-    bad: () => tone([233, 185], { dur: .2, gap: .1, gain: .06 }),
-    done: () => tone([523.3, 659.3, 784, 1046.5], { type: 'triangle', dur: .26, gap: .09 }),
-    fanfare: () => tone([523.3, 659.3, 784, 1046.5], { type: 'triangle', dur: .26, gap: .09 }),
-    tap: () => tone([880], { dur: .05, gain: .025 }),
+/* ---------- confete ---------- */
+export function confetti({ count = 150 } = {}) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = document.getElementById('confetti');
+  const g = cv.getContext('2d');
+  const W = innerWidth, H = innerHeight, dpr = devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr; g.scale(dpr, dpr);
+  const colors = ['#fae49d', '#d4af37', '#b8860b', '#ffffff', '#e2e8f0', '#94a3b8'];
+  const parts = Array.from({ length: count }, () => ({
+    x: W / 2 + (Math.random() - .5) * 120, y: H * .38,
+    vx: (Math.random() - .5) * 16, vy: -Math.random() * 14 - 5,
+    w: 6 + Math.random() * 6, h: 9 + Math.random() * 8,
+    r: Math.random() * Math.PI, vr: (Math.random() - .5) * .35,
+    color: colors[(Math.random() * colors.length) | 0],
+  }));
+  const t0 = performance.now(), LIFE = 2800;
+  const tick = (now) => {
+    const t = now - t0;
+    g.clearRect(0, 0, W, H);
+    for (const p of parts) {
+      p.vy += .36; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      g.save();
+      g.globalAlpha = Math.max(0, 1 - t / LIFE);
+      g.translate(p.x, p.y); g.rotate(p.r);
+      g.fillStyle = p.color;
+      g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)) + 1);
+      g.restore();
+    }
+    if (t < LIFE) requestAnimationFrame(tick); else g.clearRect(0, 0, W, H);
   };
+  requestAnimationFrame(tick);
+}
 
-  /* ---------- iluminação especular interativa (Awwwards spotlight) ---------- */
-  if (typeof window !== 'undefined') {
-    window.addEventListener('pointermove', (e) => {
-      const el = e.target.closest?.('.card, .tile, .bento-item, .sound, .item');
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      el.style.setProperty('--my', `${e.clientY - r.top}px`);
-    }, { passive: true });
-  }
-  export function haptic(pattern = 12) {
-    if (settings().haptics && navigator.vibrate) try { navigator.vibrate(pattern); } catch { /* sem vibração */ }
-  }
+/* ---------- sons sintetizados e vibração ---------- */
+let actx = null;
+function tone(freqs, { dur = .14, type = 'sine', gain = .07, gap = .08 } = {}) {
+  if (!settings().sfx) return;
+  try {
+    actx ||= new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = actx.currentTime + .01;
+    freqs.forEach((f, i) => {
+      const o = actx.createOscillator(), v = actx.createGain(), t = t0 + i * gap;
+      o.type = type; o.frequency.value = f;
+      v.gain.setValueAtTime(0, t);
+      v.gain.linearRampToValueAtTime(gain, t + .012);
+      v.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(v).connect(actx.destination);
+      o.start(t); o.stop(t + dur + .03);
+    });
+  } catch { /* áudio indisponível */ }
+}
+export const sfx = {
+  ok: () => tone([659.3, 987.8], { type: 'triangle', dur: .18 }),
+  bad: () => tone([233, 185], { dur: .2, gap: .1, gain: .06 }),
+  done: () => tone([523.3, 659.3, 784, 1046.5], { type: 'triangle', dur: .26, gap: .09 }),
+  fanfare: () => tone([523.3, 659.3, 784, 1046.5], { type: 'triangle', dur: .26, gap: .09 }),
+  tap: () => tone([880], { dur: .05, gain: .025 }),
+};
 
-  /* ---------- miudezas ---------- */
-  export function shuffle(a) {
-    const r = [...a];
-    for (let i = r.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0;[r[i], r[j]] = [r[j], r[i]]; }
-    return r;
-  }
-  export const sample = (a, n) => shuffle(a).slice(0, n);
-  export const pick = (a) => a[(Math.random() * a.length) | 0];
-  export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  export const frDate = (d = new Date()) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+/* ---------- iluminação especular interativa (Awwwards spotlight) ---------- */
+if (typeof window !== 'undefined') {
+  window.addEventListener('pointermove', (e) => {
+    const el = e.target.closest?.('.card, .tile, .bento-item, .sound, .item');
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }, { passive: true });
+}
+export function haptic(pattern = 12) {
+  if (settings().haptics && navigator.vibrate) try { navigator.vibrate(pattern); } catch { /* sem vibração */ }
+}
 
-  /** Número estável por dia — para "palavra do dia" e afins. */
-  export function daySeed(offset = 0) {
-    const d = new Date();
-    return d.getFullYear() * 1000 + Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + offset;
-  }
-  export const pickDaily = (arr, offset = 0) => arr[((daySeed(offset) * 2654435761) >>> 0) % arr.length];
+/* ---------- miudezas ---------- */
+export function shuffle(a) {
+  const r = [...a];
+  for (let i = r.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0;[r[i], r[j]] = [r[j], r[i]]; }
+  return r;
+}
+export const sample = (a, n) => shuffle(a).slice(0, n);
+export const pick = (a) => a[(Math.random() * a.length) | 0];
+export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+export const frDate = (d = new Date()) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(d);
+
+/** Número estável por dia — para "palavra do dia" e afins. */
+export function daySeed(offset = 0) {
+  const d = new Date();
+  return d.getFullYear() * 1000 + Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + offset;
+}
+export const pickDaily = (arr, offset = 0) => arr[((daySeed(offset) * 2654435761) >>> 0) % arr.length];
