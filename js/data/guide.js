@@ -359,3 +359,4 @@ export function getGuideProgress(st) {
     steps: stepsWithStatus,
   };
 }
+
