@@ -19,8 +19,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="css/base.css?v=3.0.0">
-  <link rel="stylesheet" href="css/components.css?v=3.0.0">
+  <link rel="stylesheet" href="css/base.css?v=3.1.0">
+  <link rel="stylesheet" href="css/components.css?v=3.1.0">
   <script>
     try {
       const s = JSON.parse(localStorage.getItem('pont:v1') || '{}');
@@ -121,15 +121,23 @@
       </svg>
       <span>Aujourd'hui</span>
     </a>
-    <a href="#/lessons" data-tab="lessons">
+    <a href="#/guide" data-tab="guide">
       <i class="tab-idx">02</i>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.5 5.5 21 7 14 2 9.3 9 8.5 12 2" />
+      </svg>
+      <span>Trilha</span>
+    </a>
+    <a href="#/lessons" data-tab="lessons">
+      <i class="tab-idx">03</i>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
       </svg>
       <span>Leçons</span>
     </a>
     <a href="#/review" data-tab="review">
-      <i class="tab-idx">03</i>
+      <i class="tab-idx">04</i>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="3" y="7" width="14" height="14" rx="2.5" />
         <path d="M7 3h11.5A2.5 2.5 0 0 1 21 5.5V17" />
@@ -138,7 +146,7 @@
       <em class="tab-badge" id="dueBadge" hidden></em>
     </a>
     <a href="#/speak" data-tab="speak">
-      <i class="tab-idx">04</i>
+      <i class="tab-idx">05</i>
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="9" y="2" width="6" height="12" rx="3" />
         <path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8" />
@@ -146,10 +154,12 @@
       <span>Parler</span>
     </a>
     <a href="#/explore" data-tab="explore">
-      <i class="tab-idx">05</i>
+      <i class="tab-idx">06</i>
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" />
-        <path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3z" />
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
       </svg>
       <span>Atelier</span>
     </a>
@@ -160,7 +170,7 @@
   <noscript>
     <p style="padding:2rem">Ative o JavaScript para usar o Pont.</p>
   </noscript>
-  <script type="module" src="js/app.js?v=3.0.0"></script>
+  <script type="module" src="js/app.js?v=3.1.0"></script>
 </body>
 
 </html>

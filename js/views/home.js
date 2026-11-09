@@ -3,6 +3,7 @@ import { getState, settings, streak, bestStreak, dayKey } from '../store.js';
 import { counts, dueCount, newLeftToday, WORDS, DECKS } from '../srs.js';
 import { LESSONS } from '../data/lessons.js';
 import { SOUNDS } from '../data/sounds.js';
+import { getGuideProgress } from '../data/guide.js';
 import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } from '../ui.js';
 
 function heatmap(weeks = 22) {
@@ -38,6 +39,9 @@ export default function render(root) {
   const name = st.profile.name;
   const sessionLabel = due + fresh ? `${plural(due, 'revisão', 'revisões')} · ${plural(fresh, 'nova', 'novas')}` : 'Memória sincronizada';
   const goalReached = t.xp >= goal;
+
+  const guideInfo = getGuideProgress(st);
+  const curStep = guideInfo.currentStep;
 
   const MODULES = [
     {
@@ -105,6 +109,43 @@ export default function render(root) {
         <h1 class="h1">${hello}${name ? html`, <span class="grad-text">${name}</span>` : ''}<em>.</em></h1>
         <p class="mast-sub">Seu francês construído sobre as pontes que você já tem: o português e o inglês.</p>
       </div>
+    </section>
+
+    <!-- Roteiro / Trilha Passo a Passo: Onde Começar -->
+    <section class="card glow pad-lg" style="margin-bottom:28px;background:linear-gradient(135deg, rgba(226,189,90,0.12) 0%, rgba(14,16,21,0.96) 100%), var(--surface);border-color:rgba(226,189,90,0.42)">
+      <div class="bento-top-bar" style="margin-bottom:12px">
+        <div class="row" style="gap:10px;align-items:center">
+          <span class="tag fr" style="background:var(--gold);color:#06070a;font-weight:750">ONDE COMEÇAR</span>
+          <span class="bento-index">PASSO ${curStep.num} DE ${guideInfo.total} · FASE ${guideInfo.currentPhase.id}: ${guideInfo.currentPhase.badge} (${guideInfo.currentPhase.level})</span>
+        </div>
+        <div class="row" style="gap:12px;align-items:center">
+          <span class="small bold" style="color:var(--gold-bright)">${guideInfo.percent}% da trilha</span>
+          <a class="btn btn-ghost btn-xs" href="#/guide">Ver Trilha Completa →</a>
+        </div>
+      </div>
+
+      <div class="row wrap between" style="gap:18px;align-items:center">
+        <div class="grow" style="max-width:740px">
+          <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+            <span class="bi-tag">${curStep.tag}</span>
+            <span class="tiny faint">⏱ ${curStep.time}</span>
+          </div>
+          <h2 class="h2" style="font-size:clamp(1.35rem, 1.1rem + 1vw, 1.85rem);margin-bottom:6px">${curStep.title}</h2>
+          <p class="small muted" style="margin:0 0 10px;font-size:1.02rem;line-height:1.55">${curStep.sub}</p>
+          <div class="callout tip" style="margin:0;padding:10px 14px">
+            <span class="ci">✦</span>
+            <div style="font-size:0.92rem"><b>Por que fazer agora:</b> ${curStep.why}</div>
+          </div>
+        </div>
+
+        <div style="flex:none;min-width:210px">
+          <a class="btn btn-primary btn-lg btn-block" href="${curStep.href}" style="padding:14px 22px">
+            ${curStep.actionText} ${icon('arrow')}
+          </a>
+        </div>
+      </div>
+      
+      <div class="bar" style="margin-top:16px;height:7px"><i style="width:${guideInfo.percent}%"></i></div>
     </section>
 
     <!-- Primary Asymmetric Bento Grid -->

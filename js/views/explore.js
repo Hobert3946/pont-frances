@@ -2,6 +2,7 @@
 import { html, mount, icon } from '../ui.js';
 
 const TOOLS = [
+  ['00', '#/guide', 'compass', 'ROTEIRO GUIADO', 'Trilha Passo a Passo (A0 → B1)', 'Sequência pedagógica estruturada em 19 passos e 5 fases para aprender do zero sem se perder.', true],
   ['01', '#/tutor', 'sparkles', 'CONVERSATION IA', 'Tutor com IA (Camille)', 'Role-play por voz em cenários parisienses com correção gramatical instantânea.', true],
   ['02', '#/speed', 'zap', 'RÉFLEXE LEXICAL', 'Treino Relâmpago 60s', 'Desafio contra o relógio com multiplicadores de combo até 3x.', true],
   ['03', '#/reader', 'book', 'LECTURE BILINGUE', 'Leitor Graduado', 'Contos A1–B1 com áudio sincronizado e dicionário ao toque.', false],
@@ -29,7 +30,7 @@ export default function render(root) {
       <div class="mast-meta">
         <span class="mast-issue">INSTRUMENTARIUM</span>
         <span class="mast-sep">◆</span>
-        <span class="mast-date">12 MODULES D'EXCELLENCE</span>
+        <span class="mast-date">13 MODULES D'EXCELLENCE</span>
       </div>
       <div class="mast-headline">
         <h1 class="h1">L'Atelier <span class="grad-text">Pont</span><em>.</em></h1>
