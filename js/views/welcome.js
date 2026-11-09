@@ -29,7 +29,7 @@ export default function render(root) {
       <h1 class="mast-headline">Seu francês, esculpido sobre o que você <span class="grad-text">já domina</span>.</h1>
       <p class="mast-sub">Português e inglês formam duas pontes diretas para o francês. O Pont conecta ambas — com retenção neural FSRS e laboratório acústico em tempo real.</p>
       <div class="row wrap" style="margin-top:8px">
-        <button class="btn btn-soft" data-act="hear">${icon('volume')} Ouvir saudação: « Bienvenue à l'Atelier ! »</button>
+        <button class="btn btn-soft" data-act="hear" style="max-width:100%">${icon('volume')} Ouvir saudação: « Bienvenue ! »</button>
       </div>
     </header>
 
@@ -46,8 +46,8 @@ export default function render(root) {
 
       <section class="card stack">
         <div class="bento-top-bar">
-          <span class="bento-index">02 · CALIBRAGE ACOUSTIQUE & LEXICAL</span>
-          <span class="tag">FSRS v4</span>
+          <span class="bento-index">02 · CADÊNCIA DIÁRIA</span>
+          <span class="tag">FSRS-5</span>
         </div>
         <div class="lbl">Cadência diária de novos vocábulos</div>
         <div class="grid grid-3">${PACES.map(([n, code, t, d]) => html`

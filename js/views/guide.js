@@ -44,7 +44,7 @@ export default function render(root) {
           </div>
         </div>
 
-        <div style="align-self:center;min-width:200px">
+        <div style="align-self:center;min-width:min(100%, 200px);width:100%;max-width:240px">
           <a class="btn btn-primary btn-lg btn-block" href="${cur.href}">
             ${cur.actionText} ${icon('arrow')}
           </a>

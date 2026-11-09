@@ -114,11 +114,11 @@ export default function render(root) {
     <!-- Roteiro / Trilha Passo a Passo: Onde Começar -->
     <section class="card glow pad-lg" style="margin-bottom:28px;background:linear-gradient(135deg, rgba(226,189,90,0.12) 0%, rgba(14,16,21,0.96) 100%), var(--surface);border-color:rgba(226,189,90,0.42)">
       <div class="bento-top-bar" style="margin-bottom:12px">
-        <div class="row" style="gap:10px;align-items:center">
+        <div class="row wrap" style="gap:8px;align-items:center">
           <span class="tag fr" style="background:var(--gold);color:#06070a;font-weight:750">ONDE COMEÇAR</span>
           <span class="bento-index">PASSO ${curStep.num} DE ${guideInfo.total} · FASE ${guideInfo.currentPhase.id}: ${guideInfo.currentPhase.badge} (${guideInfo.currentPhase.level})</span>
         </div>
-        <div class="row" style="gap:12px;align-items:center">
+        <div class="row wrap" style="gap:10px;align-items:center">
           <span class="small bold" style="color:var(--gold-bright)">${guideInfo.percent}% da trilha</span>
           <a class="btn btn-ghost btn-xs" href="#/guide">Ver Trilha Completa →</a>
         </div>
@@ -126,7 +126,7 @@ export default function render(root) {
 
       <div class="row wrap between" style="gap:18px;align-items:center">
         <div class="grow" style="max-width:740px">
-          <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+          <div class="row wrap" style="gap:8px;margin-bottom:6px;align-items:center">
             <span class="bi-tag">${curStep.tag}</span>
             <span class="tiny faint">⏱ ${curStep.time}</span>
           </div>
@@ -138,8 +138,8 @@ export default function render(root) {
           </div>
         </div>
 
-        <div style="flex:none;min-width:210px">
-          <a class="btn btn-primary btn-lg btn-block" href="${curStep.href}" style="padding:14px 22px">
+        <div style="flex:none;min-width:min(100%, 200px);width:100%;max-width:240px">
+          <a class="btn btn-primary btn-lg btn-block" href="${curStep.href}" style="padding:14px 20px">
             ${curStep.actionText} ${icon('arrow')}
           </a>
         </div>
