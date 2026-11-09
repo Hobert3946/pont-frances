@@ -2,8 +2,9 @@
 import { html, mount, icon } from '../ui.js';
 
 const TOOLS = [
-  ['00', '#/guide', 'compass', 'ROTEIRO GUIADO', 'Trilha Passo a Passo (A0 → B1)', 'Sequência pedagógica estruturada em 19 passos e 5 fases para aprender do zero sem se perder.', true],
-  ['01', '#/tutor', 'sparkles', 'CONVERSATION IA', 'Tutor com IA (Camille)', 'Role-play por voz em cenários parisienses com correção gramatical instantânea.', true],
+  ['00', '#/learn', 'sparkles', 'MÉTODO DUOLINGO', 'Aulas Interativas (Do Zero ao B1)', 'Prática rápida com áudio nativo, treino de pronúncia no microfone e fixação dinâmica.', true],
+  ['01', '#/guide', 'compass', 'ROTEIRO GUIADO', 'Trilha Passo a Passo (A0 → B1)', 'Sequência pedagógica estruturada em 19 passos e 5 fases para aprender do zero sem se perder.', true],
+  ['02', '#/tutor', 'chat', 'CONVERSATION IA', 'Tutor com IA (Camille)', 'Role-play por voz em cenários parisienses com correção gramatical instantânea.', true],
   ['02', '#/speed', 'zap', 'RÉFLEXE LEXICAL', 'Treino Relâmpago 60s', 'Desafio contra o relógio com multiplicadores de combo até 3x.', true],
   ['03', '#/reader', 'book', 'LECTURE BILINGUE', 'Leitor Graduado', 'Contos A1–B1 com áudio sincronizado e dicionário ao toque.', false],
   ['04', '#/bridges', 'bridge', 'ÉTYMOLOGIE & PONTS', 'Pontes PT → FR → EN', '16 padrões morfológicos de conversão direta e 33 falsos amigos.', false],

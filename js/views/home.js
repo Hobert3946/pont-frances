@@ -4,6 +4,7 @@ import { counts, dueCount, newLeftToday, WORDS, DECKS } from '../srs.js';
 import { LESSONS } from '../data/lessons.js';
 import { SOUNDS } from '../data/sounds.js';
 import { getGuideProgress } from '../data/guide.js';
+import { DUO_LESSONS } from '../data/duo-lessons.js';
 import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } from '../ui.js';
 
 function heatmap(weeks = 22) {
@@ -42,6 +43,14 @@ export default function render(root) {
 
   const guideInfo = getGuideProgress(st);
   const curStep = guideInfo.currentStep;
+
+  st.duoLessons = st.duoLessons || {};
+  const allDuoIds = Object.keys(DUO_LESSONS);
+  const nextDuoId = allDuoIds.find((id) => !st.duoLessons[id]) || '1';
+  const nextDuo = DUO_LESSONS[nextDuoId];
+  const duoDoneCount = allDuoIds.filter((id) => st.duoLessons[id]).length;
+  const duoTotal = allDuoIds.length;
+  const duoPct = Math.round((duoDoneCount / duoTotal) * 100);
 
   const MODULES = [
     {
@@ -111,41 +120,39 @@ export default function render(root) {
       </div>
     </section>
 
-    <!-- Roteiro / Trilha Passo a Passo: Onde Começar -->
+    <!-- Trilha Prática Interativa Estilo Duolingo -->
     <section class="card glow pad-lg" style="margin-bottom:28px;background:linear-gradient(135deg, rgba(226,189,90,0.12) 0%, rgba(14,16,21,0.96) 100%), var(--surface);border-color:rgba(226,189,90,0.42)">
       <div class="bento-top-bar" style="margin-bottom:12px">
         <div class="row wrap" style="gap:8px;align-items:center">
-          <span class="tag fr" style="background:var(--gold);color:#06070a;font-weight:750">ONDE COMEÇAR</span>
-          <span class="bento-index">PASSO ${curStep.num} DE ${guideInfo.total} · FASE ${guideInfo.currentPhase.id}: ${guideInfo.currentPhase.badge} (${guideInfo.currentPhase.level})</span>
+          <span class="tag fr" style="background:var(--gold);color:#06070a;font-weight:750">MÉTODO DUOLINGO</span>
+          <span class="bento-index">LIÇÃO ${nextDuo.id} DE ${duoTotal} · ${nextDuo.title.toUpperCase()}</span>
         </div>
         <div class="row wrap" style="gap:10px;align-items:center">
-          <span class="small bold" style="color:var(--gold-bright)">${guideInfo.percent}% da trilha</span>
-          <a class="btn btn-ghost btn-xs" href="#/guide">Ver Trilha Completa →</a>
+          <span class="small bold" style="color:var(--gold-bright)">${duoDoneCount}/${duoTotal} lições concluídas (${duoPct}%)</span>
+          <a class="btn btn-ghost btn-xs" href="#/learn">Ver Trilha Duolingo →</a>
         </div>
       </div>
 
       <div class="row wrap between" style="gap:18px;align-items:center">
         <div class="grow" style="max-width:740px">
           <div class="row wrap" style="gap:8px;margin-bottom:6px;align-items:center">
-            <span class="bi-tag">${curStep.tag}</span>
-            <span class="tiny faint">⏱ ${curStep.time}</span>
+            <span class="bi-tag">PRÁTICA INTERATIVA</span>
+            <span class="tiny faint">⏱ ~2 min · Áudio Nativo + Microfone + Fixação</span>
           </div>
-          <h2 class="h2" style="font-size:clamp(1.35rem, 1.1rem + 1vw, 1.85rem);margin-bottom:6px">${curStep.title}</h2>
-          <p class="small muted" style="margin:0 0 10px;font-size:1.02rem;line-height:1.55">${curStep.sub}</p>
-          <div class="callout tip" style="margin:0;padding:10px 14px">
-            <span class="ci">✦</span>
-            <div style="font-size:0.92rem"><b>Por que fazer agora:</b> ${curStep.why}</div>
-          </div>
+          <h2 class="h2" style="font-size:clamp(1.35rem, 1.1rem + 1vw, 1.85rem);margin-bottom:6px">${nextDuo.title}: ${nextDuo.sub}</h2>
+          <p class="small muted" style="margin:0 0 10px;font-size:1.02rem;line-height:1.55">
+            Aprenda ouvindo a pronúncia clara, repita no microfone e fixe o vocabulário com desafios rápidos e divertidos.
+          </p>
         </div>
 
         <div style="flex:none;min-width:min(100%, 200px);width:100%;max-width:240px">
-          <a class="btn btn-primary btn-lg btn-block" href="${curStep.href}" style="padding:14px 20px">
-            ${curStep.actionText} ${icon('arrow')}
+          <a class="btn btn-primary btn-lg btn-block" href="#/learn/${nextDuo.id}" style="padding:14px 20px">
+            ${icon('play')} Jogar Lição ${nextDuo.id}
           </a>
         </div>
       </div>
       
-      <div class="bar" style="margin-top:16px;height:7px"><i style="width:${guideInfo.percent}%"></i></div>
+      <div class="bar" style="margin-top:16px;height:7px"><i style="width:${Math.max(5, duoPct)}%"></i></div>
     </section>
 
     <!-- Primary Asymmetric Bento Grid -->

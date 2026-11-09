@@ -18,12 +18,12 @@ darkMq.addEventListener?.('change', applyTheme);
 
 /* ---------- rotas ---------- */
 const ROUTES = {
-  '': 'home', welcome: 'welcome', guide: 'guide', trilha: 'guide', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'decks', deck: 'decks',
+  '': 'home', welcome: 'welcome', guide: 'guide', trilha: 'guide', learn: 'learn', aula: 'learn', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'decks', deck: 'decks',
   speak: 'speak', sound: 'speak', shadow: 'shadow', listen: 'listen', verbs: 'verbs', verb: 'verbs',
   bridges: 'bridges', phrases: 'phrases', tutor: 'tutor', explore: 'explore', settings: 'settings',
   speed: 'speed', reader: 'reader', stats: 'stats',
 };
-const TABS = { '': 'home', welcome: 'home', guide: 'guide', trilha: 'guide', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'review', deck: 'review', speak: 'speak', sound: 'speak', shadow: 'speak', settings: '', speed: 'explore', reader: 'explore', stats: 'explore', explore: 'explore' };
+const TABS = { '': 'home', welcome: 'home', guide: 'guide', trilha: 'guide', learn: 'guide', aula: 'guide', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'review', deck: 'review', speak: 'speak', sound: 'speak', shadow: 'speak', settings: '', speed: 'explore', reader: 'explore', stats: 'explore', explore: 'explore' };
 
 const view = document.getElementById('view');
 let cleanup = null;
