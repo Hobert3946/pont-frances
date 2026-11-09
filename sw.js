@@ -1,21 +1,24 @@
 // Service worker do Pont: funciona offline e se atualiza sozinho.
-const VERSION = 'pont-v1.0.0';
+const VERSION = 'pont-v2.0.0';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest',
   'css/base.css', 'css/components.css',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
   'js/app.js', 'js/store.js', 'js/fsrs.js', 'js/speech.js', 'js/ui.js', 'js/srs.js', 'js/markup.js', 'js/practice.js',
-  'js/data/decks.js', 'js/data/vocab-1.js', 'js/data/vocab-2.js', 'js/data/vocab-3.js', 'js/data/vocab-4.js',
+  'js/achievements.js', 'js/search.js',
+  'js/data/decks.js', 'js/data/vocab-1.js', 'js/data/vocab-2.js', 'js/data/vocab-3.js', 'js/data/vocab-4.js', 'js/data/vocab-5.js',
   'js/data/lessons.js', 'js/data/lessons-1.js', 'js/data/lessons-2.js', 'js/data/lessons-3.js', 'js/data/lessons-4.js',
-  'js/data/sounds.js', 'js/data/verbs.js', 'js/data/bridges.js', 'js/data/phrases.js',
+  'js/data/sounds.js', 'js/data/verbs.js', 'js/data/bridges.js', 'js/data/phrases.js', 'js/data/stories.js',
   'js/views/home.js', 'js/views/welcome.js', 'js/views/lessons.js', 'js/views/review.js', 'js/views/decks.js',
   'js/views/speak.js', 'js/views/shadow.js', 'js/views/listen.js', 'js/views/verbs.js', 'js/views/bridges.js',
   'js/views/phrases.js', 'js/views/tutor.js', 'js/views/explore.js', 'js/views/settings.js',
+  'js/views/speed.js', 'js/views/reader.js', 'js/views/stats.js',
 ];
 const RUNTIME = `${VERSION}-runtime`;
 const CDN = /^https:\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net)\//;
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)));
 });
 
@@ -41,9 +44,9 @@ self.addEventListener('fetch', (e) => {
   }
   if (url.origin !== location.origin) return;
 
-  // Navegação: sempre o shell (o roteamento é por #hash)
+  // Navegação: rede primeiro com fallback para cache
   if (req.mode === 'navigate') {
-    e.respondWith(caches.match('index.html').then((r) => r || fetch(req)));
+    e.respondWith(fetch(req).catch(() => caches.match('index.html')));
     return;
   }
   e.respondWith(staleWhileRevalidate(req, VERSION));

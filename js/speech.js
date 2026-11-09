@@ -141,7 +141,7 @@ export async function startCapture(canvas) {
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, w, h);
     const grad = g.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, '#4f5bff'); grad.addColorStop(.5, '#8a4fff'); grad.addColorStop(1, '#ff4f74');
+    grad.addColorStop(0, '#fae49d'); grad.addColorStop(.5, '#d4af37'); grad.addColorStop(1, '#e2e8f0');
     g.fillStyle = grad;
     const bars = 42, step = Math.floor(data.length / bars), bw = w / bars;
     for (let i = 0; i < bars; i++) {

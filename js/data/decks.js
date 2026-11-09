@@ -3,12 +3,13 @@ import p1 from './vocab-1.js';
 import p2 from './vocab-2.js';
 import p3 from './vocab-3.js';
 import p4 from './vocab-4.js';
+import p5 from './vocab-5.js';
 
 const seen = new Set();
 
 // Ordem do currículo (a progressão automática segue esta sequência).
 const ORDER = ['essentiels', 'gens', 'temps', 'verbes', 'liens', 'cuisine', 'maison', 'adjectifs', 'ville',
-  'travail', 'sentiments', 'voyage', 'sante', 'familier'];
+'travail', 'tech', 'sentiments', 'voyage', 'voyage_pratique', 'sante', 'quebec', 'familier'];
 
 function gender(fr) {
   if (/\(m\.\/f\.\)|\/\s*(la\s|une\b)/.test(fr)) return '';
@@ -30,6 +31,6 @@ function parseDeck(d) {
 }
 
 const rank = (d) => { const i = ORDER.indexOf(d.id); return i < 0 ? 99 : i; };
-export const DECKS = [...p1, ...p2, ...p3, ...p4].sort((a, b) => rank(a) - rank(b)).map(parseDeck);
+export const DECKS = [...p1, ...p2, ...p3, ...p4, ...p5].sort((a, b) => rank(a) - rank(b)).map(parseDeck);
 export const WORDS = DECKS.flatMap((d) => d.words);
 export const WORD = Object.fromEntries(WORDS.map((w) => [w.id, w]));

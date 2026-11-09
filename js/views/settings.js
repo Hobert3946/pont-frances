@@ -1,5 +1,5 @@
 // Ajustes: perfil, voz, estudo, aparência, tutor IA, instalação e backup.
-import { getState, settings, setSetting, save, exportJSON, importJSON, resetProgress } from '../store.js';
+import { getState, settings, setSetting, save, exportJSON, importJSON, resetProgress, buyStreakFreeze } from '../store.js';
 import { frenchVoices, currentVoice, speak, voicesReady, ttsSupported, sttSupported } from '../speech.js';
 import { applyTheme } from '../app.js';
 import { MODELS } from './tutor.js';
@@ -52,10 +52,14 @@ export default function render(root) {
         ${row('Chave da API', s.tutorKey ? `Salva neste navegador (…${s.tutorKey.slice(-4)})` : 'Não configurada', s.tutorKey ? html`<button class="btn btn-danger btn-sm" data-act="delKey">${icon('trash')} Remover</button>` : html`<a class="btn btn-soft btn-sm" href="#/tutor">Configurar</a>`)}
       </section>
 
-      <section class="card" style="margin-top:12px"><div class="eyebrow" style="margin-bottom:4px">App</div>
+      <section class="card" style="margin-top:12px"><div class="eyebrow" style="margin-bottom:4px">App & Dados</div>
+        ${row('Protetor de Ofensiva', `${st.streakFreezes || 0} guardado(s) de no máximo 2`, html`<div class="row" style="gap:6px">
+          ${(st.streakFreezes || 0) < 2 ? html`<button class="btn btn-soft btn-sm" data-act="buyFreeze">Comprar (100 XP)</button>` : html`<span class="tiny good">Cheio ✓</span>`}</div>`)}
         ${row('Instalar o Pont', window.matchMedia('(display-mode: standalone)').matches ? 'Já está rodando como app instalado ✓' : 'Ícone na tela inicial, abre em tela cheia e funciona offline',
-          window.__pontInstall ? html`<button class="btn btn-primary btn-sm" data-act="install">${icon('phone')} Instalar</button>` : html`<span class="tiny faint" style="max-width:150px">No iPhone: Compartilhar → Adicionar à Tela de Início</span>`)}
-        ${row('Backup do progresso', 'Arquivo .json (sem a chave da API)', html`<div class="row" style="gap:6px"><button class="btn btn-ghost btn-sm" data-act="export">${icon('download')} Exportar</button>
+      window.__pontInstall ? html`<button class="btn btn-primary btn-sm" data-act="install">${icon('phone')} Instalar</button>` : html`<span class="tiny faint" style="max-width:150px">No iPhone: Compartilhar → Adicionar à Tela de Início</span>`)}
+        ${row('Backup do progresso', `${Object.keys(st.cards || {}).length} palavras salvas · ${st.xp} XP acumulado`, html`<div class="row wrap" style="gap:6px">
+          <button class="btn btn-ghost btn-sm" data-act="copyBackup" title="Copiar texto JSON">${icon('layers')} Copiar</button>
+          <button class="btn btn-ghost btn-sm" data-act="export">${icon('download')} Baixar</button>
           <label class="btn btn-ghost btn-sm" style="cursor:pointer">${icon('upload')} Importar<input type="file" accept="application/json,.json" id="imp" hidden></label></div>`)}
         ${row('Zerar progresso', 'Apaga cartões, XP e histórico. Mantém os ajustes.', html`<button class="btn btn-danger btn-sm" data-act="reset">${icon('trash')} Zerar</button>`)}
       </section>
@@ -98,6 +102,16 @@ export default function render(root) {
       const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `pont-backup-${new Date().toISOString().slice(0, 10)}.json` });
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    },
+    copyBackup: () => {
+      navigator.clipboard?.writeText(exportJSON())
+        .then(() => toast('Backup copiado para a área de transferência! ✓', { type: 'ok' }))
+        .catch(() => toast('Não foi possível copiar automaticamente.', { type: 'err' }));
+    },
+    buyFreeze: () => {
+      const res = buyStreakFreeze(100);
+      toast(res.msg, { type: res.ok ? 'ok' : 'err' });
+      if (res.ok) draw();
     },
     reset: () => {
       if (!confirm('Zerar todo o progresso? Isso não pode ser desfeito (a não ser que você tenha um backup).')) return;

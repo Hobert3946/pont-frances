@@ -1,6 +1,7 @@
 // Sessão de revisão (FSRS). O modo de cada cartão se adapta à força da memória:
 // reconhecer (FR→PT) → ouvir sem ver → produzir (PT→FR, digitando ou falando).
 import { getState, settings, addXP } from '../store.js';
+import { checkAchievements } from '../achievements.js';
 import { dueIds, newIds, grade, forecast, WORD } from '../srs.js';
 import { preview, formatDelay, State } from '../fsrs.js';
 import { speak, checkAnswer, sttSupported, listen, scoreSpeech, sttErrorMessage, stopListening } from '../speech.js';
@@ -32,7 +33,7 @@ export default function render(root, params) {
   let done = 0, wrong = 0, xp = 0;
   let cur = null; // { id, w, card, mode, revealed, suggested, typed }
   let lock = null;
-  navigator.wakeLock?.request('screen').then((l) => { lock = l; }).catch(() => {});
+  navigator.wakeLock?.request('screen').then((l) => { lock = l; }).catch(() => { });
 
   const total = () => done + queue.length + (cur ? 1 : 0);
 
@@ -111,7 +112,7 @@ export default function render(root, params) {
       <div style="margin-top:14px">
         ${cur.revealed ? grades() : cur.mode !== 'type' ? html`<button class="btn btn-primary btn-lg btn-block" data-act="reveal">Mostrar resposta</button>` : ''}
       </div>
-      <div class="center tiny faint" style="margin-top:12px">Atalhos: <span class="kbd">espaço</span> virar · <span class="kbd">1</span>–<span class="kbd">4</span> avaliar</div>
+      <div class="center tiny faint" style="margin-top:12px">Atalhos: <span class="kbd">espaço</span> virar · <span class="kbd">1</span>–<span class="kbd">4</span> avaliar · <span class="kbd">R</span> ouvir · <span class="kbd">S</span> devagar</div>
     `);
   }
 
@@ -151,6 +152,7 @@ export default function render(root, params) {
     if (!done) return empty();
     sfx.done();
     confetti();
+    checkAchievements();
     const acc = Math.round(((done - wrong) / done) * 100);
     mount(root, html`
       <section class="card hero glow pad-lg center stack">
@@ -230,6 +232,8 @@ export default function render(root, params) {
     }
     if ((e.key === ' ' || e.key === 'Enter') && !cur.revealed && cur.mode !== 'type') { e.preventDefault(); reveal(); }
     else if (cur.revealed && ['1', '2', '3', '4'].includes(e.key)) rate(+e.key);
+    else if (e.key.toLowerCase() === 'r' && cur?.w?.fr) { speak(cur.w.fr); }
+    else if (e.key.toLowerCase() === 's' && cur?.w?.fr) { speak(cur.w.fr, { rate: 0.7 }); }
   };
   document.addEventListener('keydown', onKey);
   next();

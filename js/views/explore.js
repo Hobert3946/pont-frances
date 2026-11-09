@@ -1,43 +1,86 @@
-// Explorar: todas as ferramentas do Pont + recursos de imersão.
+// Atelier (Explorar): Instrumentarium completo do Pont em Bento Grid + curadoria cultural.
 import { html, mount, icon } from '../ui.js';
 
 const TOOLS = [
-  ['#/tutor', 'sparkles', '#8a4fff', 'Tutor com IA', 'Converse por voz em situações reais e receba correções.'],
-  ['#/bridges', 'bridge', '#4f5bff', 'Pontes', 'Padrões PT → FR → EN e falsos amigos.'],
-  ['#/verbs', 'table', '#0e9f6e', 'Conjugação', '77 verbos, 7 tempos, com áudio e treino.'],
-  ['#/phrases', 'bubble', '#f08c00', 'Frases prontas', 'Café, hotel, trabalho, médico, compras…'],
-  ['#/listen', 'headphones', '#ff4f74', 'Ditado', 'Ouça e escreva. Acelera a compreensão.'],
-  ['#/shadow', 'waves', '#a855f7', 'Shadowing', 'Repita frases imitando o ritmo nativo.'],
-  ['#/decks', 'layers', '#2563eb', 'Vocabulário', '420 palavras em 14 temas.'],
-  ['#/lessons', 'book', '#db2777', 'Lições', '21 lições de gramática-ponte.'],
+  ['01', '#/tutor', 'sparkles', 'CONVERSATION IA', 'Tutor com IA (Camille)', 'Role-play por voz em cenários parisienses com correção gramatical instantânea.', true],
+  ['02', '#/speed', 'zap', 'RÉFLEXE LEXICAL', 'Treino Relâmpago 60s', 'Desafio contra o relógio com multiplicadores de combo até 3x.', true],
+  ['03', '#/reader', 'book', 'LECTURE BILINGUE', 'Leitor Graduado', 'Contos A1–B1 com áudio sincronizado e dicionário ao toque.', false],
+  ['04', '#/bridges', 'bridge', 'ÉTYMOLOGIE & PONTS', 'Pontes PT → FR → EN', '16 padrões morfológicos de conversão direta e 33 falsos amigos.', false],
+  ['05', '#/verbs', 'table', 'SYSTÈME VERBAL', 'Motor de Conjugação', '77 verbos essenciais conjugados em 7 tempos com áudio e treino.', false],
+  ['06', '#/listen', 'headphones', 'COMPRÉHENSION', 'Ditado Auditivo', 'Escuta de alta precisão com diagnóstico ortográfico palavra por palavra.', false],
+  ['07', '#/shadow', 'waves', 'PROSODIE & RYTHME', 'Shadowing Acústico', 'Imitação de cadência e melodia nativa com espectrograma de voz.', false],
+  ['08', '#/phrases', 'bubble', 'SITUATIONS RÉELLES', 'Guia de Frases', 'Expressões indispensáveis para café, hotel, TI, aeroporto e saúde.', false],
+  ['09', '#/decks', 'layers', 'COLLECTION FSRS-5', 'Cofre de Vocabulário', '500+ palavras em 17 coleções temáticas (incluindo TI, Viagem e Québec).', false],
+  ['10', '#/lessons', 'book', 'ARCHITECTURE A1–B1', 'Lições de Gramática', '21 dossiês contrastivos mostrando onde o português ajuda e onde engana.', false],
+  ['11', '#/stats', 'trophy', 'TÉLÉMÉTRIE & BADGES', 'Conquistas & Métricas', 'Curva de retenção FSRS, precisão fonética e galeria de medalhas.', false],
+  ['12', '#/settings', 'gauge', 'PRÉFÉRENCES', 'Ajustes & Backup', 'Vozes neurais, sotaques francófonos, retenção-alvo e exportação JSON.', false],
 ];
 
 const MEDIA = [
-  ['InnerFrench (podcast)', 'Francês claro e lento sobre temas interessantes. Ideal do A2 ao B1.', 'https://innerfrench.com/'],
-  ['Journal en français facile — RFI', 'Notícias diárias em francês simplificado, com transcrição.', 'https://francaisfacile.rfi.fr/'],
-  ['TV5Monde — Apprendre le français', 'Vídeos curtos com exercícios, por nível.', 'https://apprendre.tv5monde.com/'],
-  ['Easy French (YouTube)', 'Entrevistas nas ruas, com legendas em francês e inglês.', 'https://www.youtube.com/@EasyFrench'],
-  ['Séries com áudio e legenda em francês', 'Lupin, Dix pour cent, Le Bureau des légendes, Les Revenants.', ''],
+  ['PODCAST · A2–B1', 'InnerFrench', 'Francês articulado e reflexivo sobre sociedade, história e cultura.', 'https://innerfrench.com/'],
+  ['RADIO · QUOTIDIEN', 'Journal en français facile (RFI)', 'Noticiário internacional diário em francês claro com transcrição integral.', 'https://francaisfacile.rfi.fr/'],
+  ['VIDÉO · EXERCICES', 'TV5Monde — Apprendre', 'Reportagens francófonas autênticas acompanhadas de fichas interativas.', 'https://apprendre.tv5monde.com/'],
+  ['DOCUMENTAIRE · RUE', 'Easy French', 'Conversas espontâneas nas ruas de Paris e Montreal com dupla legenda.', 'https://www.youtube.com/@EasyFrench'],
 ];
 
 export default function render(root) {
   mount(root, html`
-    <section class="stack-sm">
-      <div class="eyebrow">Ferramentas</div>
-      <h1 class="h1">Explorar</h1>
+    <section class="editorial-mast">
+      <div class="mast-meta">
+        <span class="mast-issue">INSTRUMENTARIUM</span>
+        <span class="mast-sep">◆</span>
+        <span class="mast-date">12 MODULES D'EXCELLENCE</span>
+      </div>
+      <div class="mast-headline">
+        <h1 class="h1">L'Atelier <span class="grad-text">Pont</span><em>.</em></h1>
+        <p class="mast-sub">Todas as ferramentas de engenharia cognitiva, fonética acústica e imersão reunidas em um único espaço.</p>
+      </div>
     </section>
-    <div class="grid grid-2" style="margin-top:16px">${TOOLS.map(([href, ic, c, t, d]) => html`
-      <a class="tile" href="${href}" style="--c:${c}"><span class="blob">${icon(ic)}</span><h3>${t}</h3><p>${d}</p></a>`)}</div>
 
-    <div class="section-title"><h2>Imersão</h2><span class="small faint">fora do app</span></div>
-    <div class="list">${MEDIA.map(([t, d, url]) => html`
-      <${url ? 'a' : 'div'} class="item" ${url ? html`href="${url}" target="_blank" rel="noopener"` : ''}>
-        <span class="ico">${icon(url ? 'globe' : 'music')}</span>
-        <span class="grow"><b>${t}</b><br><span class="small muted">${d}</span></span>${url ? icon('chev', 'chev') : ''}
-      </${url ? 'a' : 'div'}>`)}</div>
-    <div class="callout tip" style="margin-top:14px"><span class="ci">💡</span><div>Truque de imersão grátis: mude o idioma do celular e da Netflix para francês. Você já sabe onde ficam os botões — vai aprender o vocabulário sem esforço.</div></div>
+    <div class="bento-grid-3">
+      ${TOOLS.map(([idx, href, ic, tag, title, desc, feat]) => html`
+        <a class="bento-item ${feat ? 'featured' : ''}" href="${href}">
+          <div class="bi-head">
+            <span class="bi-idx">${idx}</span>
+            <span class="bi-ico">${icon(ic)}</span>
+          </div>
+          <div class="bi-body">
+            <div class="bi-tag">${tag}</div>
+            <h3 class="bi-title">${title}</h3>
+            <p class="bi-desc">${desc}</p>
+          </div>
+          <div class="bi-foot">
+            <span>Abrir instrumento</span>
+            <span class="bi-arrow">→</span>
+          </div>
+        </a>
+      `)}
+    </div>
 
-    <div class="list" style="margin-top:20px">
-      <a class="item" href="#/settings"><span class="ico">${icon('gauge')}</span><span class="grow"><b>Ajustes</b><br><span class="small muted">Voz, ritmo, tema, backup e instalação</span></span>${icon('chev', 'chev')}</a>
-    </div>`);
+    <div class="section-header" style="margin-top:38px">
+      <div>
+        <span class="eyebrow">CULTURE FRANCOPHONE</span>
+        <h2>Imersão Curada</h2>
+      </div>
+      <span class="small faint">Fontes externas recomendadas</span>
+    </div>
+
+    <div class="bento-grid-2">
+      ${MEDIA.map(([tag, title, desc, url]) => html`
+        <a class="card link stack-sm" href="${url}" target="_blank" rel="noopener">
+          <div class="row between">
+            <span class="bento-index">${tag}</span>
+            ${icon('globe')}
+          </div>
+          <div class="h3 fr" style="font-size:1.25rem;color:#fff">${title}</div>
+          <p class="small muted">${desc}</p>
+        </a>
+      `)}
+    </div>
+
+    <div class="callout tip" style="margin-top:20px">
+      <span class="ci">✦</span>
+      <div><b>Segredo de Imersão Passiva:</b> altere o idioma do seu smartphone e da sua conta de streaming para francês (séries como <i>Lupin</i>, <i>Dix pour cent</i> e <i>Le Bureau des légendes</i>). Como você já domina a interface, seu cérebro absorve o vocabulário funcional sem esforço.</div>
+    </div>
+  `);
 }

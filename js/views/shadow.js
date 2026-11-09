@@ -1,5 +1,6 @@
 // Shadowing: ouvir uma frase e repeti-la imitando ritmo e melodia.
 import { addXP, bump } from '../store.js';
+import { checkAchievements } from '../achievements.js';
 import { SENTENCES } from '../data/phrases.js';
 import { speak } from '../speech.js';
 import { mountPractice } from '../practice.js';
@@ -22,7 +23,7 @@ export default function render(root) {
         <div class="row between"><span class="eyebrow">Frase ${i + 1} de ${list.length}</span>
           <div class="row" style="gap:6px"><button class="btn btn-ghost btn-sm" data-say="${s.fr}" data-rate=".7">${icon('gauge')} Devagar</button></div></div>
         <div class="center" id="text">${revealed ? html`<div class="fr" style="font-size:1.6rem;font-weight:600;line-height:1.3">${s.fr}</div><div class="small muted" style="margin-top:6px">${s.pt}</div>`
-          : html`<button class="btn btn-soft" data-act="show">${icon('eye')} Mostrar texto</button>`}</div>
+        : html`<button class="btn btn-soft" data-act="show">${icon('eye')} Mostrar texto</button>`}</div>
         <div id="practice"></div>
       </section>
       <div class="row between" style="margin-top:14px">
@@ -36,6 +37,7 @@ export default function render(root) {
         bump('shadowing');
         if (r.score >= .6) addXP(r.score >= .85 ? 3 : 2, 'speaking');
         if (!revealed) { revealed = true; showText(); }
+        checkAchievements();
       },
     });
     setTimeout(() => speak(s.fr), 300);

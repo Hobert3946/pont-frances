@@ -1,6 +1,8 @@
 // Casca do app: roteador, tema, barra superior, atalhos globais e service worker.
 import { getState, settings, streak, addMinutes } from './store.js';
 import { speak, stopSpeaking, stopListening, voicesReady } from './speech.js';
+import { initSearch } from './search.js';
+import { checkAchievements } from './achievements.js';
 import { $, html, icon, toast } from './ui.js';
 
 /* ---------- tema ---------- */
@@ -10,7 +12,7 @@ export function applyTheme() {
   const dark = t === 'dark' || (t === 'auto' && darkMq.matches);
   document.documentElement.dataset.theme = t;
   document.documentElement.dataset.scheme = dark ? 'dark' : 'light';
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#090c1a' : '#f6f2ea'));
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#06070a' : '#f5f2eb'));
 }
 darkMq.addEventListener?.('change', applyTheme);
 
@@ -19,8 +21,9 @@ const ROUTES = {
   '': 'home', welcome: 'welcome', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'decks', deck: 'decks',
   speak: 'speak', sound: 'speak', shadow: 'shadow', listen: 'listen', verbs: 'verbs', verb: 'verbs',
   bridges: 'bridges', phrases: 'phrases', tutor: 'tutor', explore: 'explore', settings: 'settings',
+  speed: 'speed', reader: 'reader', stats: 'stats',
 };
-const TABS = { '': 'home', welcome: 'home', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'review', deck: 'review', speak: 'speak', sound: 'speak', shadow: 'speak', settings: '' };
+const TABS = { '': 'home', welcome: 'home', lessons: 'lessons', lesson: 'lessons', review: 'review', decks: 'review', deck: 'review', speak: 'speak', sound: 'speak', shadow: 'speak', settings: '', speed: 'explore', reader: 'explore', stats: 'explore' };
 
 const view = document.getElementById('view');
 let cleanup = null;
@@ -81,14 +84,15 @@ function refreshBadge() {
     b.hidden = !n;
     b.textContent = n > 99 ? '99+' : n;
     // Badging API: número no ícone do app instalado
-    if (n) navigator.setAppBadge?.(n).catch(() => {}); else navigator.clearAppBadge?.().catch(() => {});
+    if (n) navigator.setAppBadge?.(n).catch(() => { }); else navigator.clearAppBadge?.().catch(() => { });
   }, 350);
 }
 
-window.addEventListener('pont:change', () => { refreshTop(); refreshBadge(); });
+window.addEventListener('pont:change', () => { refreshTop(); refreshBadge(); checkAchievements(); });
 window.addEventListener('pont:xp', () => {
   const c = $('#xpChip');
   c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
+  checkAchievements();
 });
 
 /* ---------- toque para ouvir: qualquer [data-say] fala em francês ---------- */
@@ -154,7 +158,9 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 applyTheme();
 refreshTop();
 refreshBadge();
+initSearch();
+checkAchievements();
 addEventListener('hashchange', route);
 route();
 voicesReady.then(() => window.dispatchEvent(new Event('pont:voices')));
-if (getState().profile.onboarded) navigator.storage?.persist?.().catch(() => {});
+if (getState().profile.onboarded) navigator.storage?.persist?.().catch(() => { });

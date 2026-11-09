@@ -1,5 +1,6 @@
 // Ditado: ouvir e escrever. A correção mostra palavra por palavra (acentos, erros, faltas).
 import { settings, addXP, bump } from '../store.js';
+import { checkAchievements } from '../achievements.js';
 import { SENTENCES } from '../data/phrases.js';
 import { speak, compareTyped } from '../speech.js';
 import { html, mount, actions, icon, pageHead, accentBar, diffView, shuffle, confetti, sfx, haptic, $ } from '../ui.js';
@@ -63,6 +64,7 @@ export default function render(root) {
   function summary() {
     const pct = list.length ? total / list.length : 0;
     if (pct >= .9) { sfx.done(); confetti(); }
+    checkAchievements();
     mount(root, html`
       ${pageHead('Ditado', { back: '#/speak' })}
       <section class="card hero glow pad-lg center stack">

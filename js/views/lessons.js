@@ -1,5 +1,6 @@
 // Lições de gramática: lista por nível e leitor com quiz.
 import { getState, save, addXP } from '../store.js';
+import { checkAchievements } from '../achievements.js';
 import { LESSONS, LESSON, LEVELS } from '../data/lessons.js';
 import { markup, inline } from '../markup.js';
 import { checkAnswer } from '../speech.js';
@@ -9,23 +10,48 @@ import { html, raw, mount, actions, icon, pageHead, accentBar, diffView, confett
 function list(root) {
   const st = getState();
   const done = LESSONS.filter((l) => st.lessons[l.id]).length;
+  const pct = Math.round((done / LESSONS.length) * 100);
   mount(root, html`
-    <section class="stack-sm">
-      <div class="eyebrow">Gramática-ponte</div>
-      <h1 class="h1">Lições</h1>
-      <p class="muted">Curtas e diretas: cada lição mostra onde o português e o inglês ajudam — e onde enganam.</p>
-      <div class="row" style="margin-top:6px"><div class="bar grow"><i style="width:${(done / LESSONS.length) * 100}%"></i></div><span class="small bold">${done}/${LESSONS.length}</span></div>
+    <section class="editorial-mast">
+      <div class="mast-meta">
+        <span class="mast-issue">CURRICULUM CONTRASTIF</span>
+        <span class="mast-sep">◆</span>
+        <span class="mast-date">${done} DE ${LESSONS.length} DOSSIÊS CONCLUÍDOS (${pct}%)</span>
+      </div>
+      <div class="mast-headline">
+        <h1 class="h1">Grammaire <span class="grad-text">Pont</span><em>.</em></h1>
+        <p class="mast-sub">Dossiês concisos e diretos: cada capítulo revela onde o português e o inglês aceleram seu francês — e onde armam ciladas.</p>
+      </div>
+      <div class="bar" style="margin-top:16px"><i style="width:${pct}%"></i></div>
     </section>
-    ${LEVELS.map((lv) => html`
-      <div class="section-title"><h2>${lv.title}</h2></div>
-      <p class="small muted" style="margin:-6px 2px 12px">${lv.desc}</p>
-      <div class="list">${LESSONS.filter((l) => l.level === lv.id).map((l, i) => {
-        const r = st.lessons[l.id];
-        return html`<a class="item ${r ? 'done' : ''}" href="#/lesson/${l.id}">
-          <span class="ico">${r ? icon('check') : html`<b class="fr">${i + 1}</b>`}</span>
-          <span class="grow"><b>${l.title}</b><br><span class="small muted">${l.sub}</span></span>
-          <span class="tiny faint">${r ? `${Math.round(r.best * 100)}%` : `${l.min} min`}</span>${icon('chev', 'chev')}</a>`;
-      })}</div>`)}
+
+    ${LEVELS.map((lv, lIdx) => html`
+      <div class="section-header" style="margin-top:${lIdx === 0 ? '12px' : '36px'}">
+        <div>
+          <span class="eyebrow">NIVEAU CECR · 0${lIdx + 1}</span>
+          <h2>${lv.title}</h2>
+        </div>
+        <span class="small muted">${lv.desc}</span>
+      </div>
+      <div class="bento-grid-3">${LESSONS.filter((l) => l.level === lv.id).map((l) => {
+    const globalIdx = String(LESSONS.indexOf(l) + 1).padStart(2, '0');
+    const r = st.lessons[l.id];
+    return html`<a class="bento-item ${r ? 'done' : ''}" href="#/lesson/${l.id}">
+          <div class="bi-head">
+            <span class="bi-idx">LEÇON ${globalIdx}</span>
+            <span class="bi-ico">${r ? icon('check') : html`<b class="fr">${globalIdx}</b>`}</span>
+          </div>
+          <div class="bi-body">
+            <div class="bi-tag">${l.level} · ${l.min} MIN</div>
+            <h3 class="bi-title">${l.title}</h3>
+            <p class="bi-desc">${l.sub}</p>
+          </div>
+          <div class="bi-foot">
+            <span>${r ? `Domínio: ${Math.round(r.best * 100)}%` : 'Estudar dossiê'}</span>
+            <span class="bi-arrow">→</span>
+          </div>
+        </a>`;
+  })}</div>`)}
   `);
 }
 
@@ -112,6 +138,7 @@ function lesson(root, id) {
         save();
         addXP((first ? 10 : 3) + correct * 2, 'lessons');
         if (pct >= .8) { sfx.done(); confetti(); }
+        checkAchievements();
       }
       draw();
     },

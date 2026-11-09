@@ -6,7 +6,7 @@ const DEFAULTS = {
   createdAt: 0,
   profile: { name: '', onboarded: false, level: 'zero' },
   settings: {
-    theme: 'auto',        // auto | light | dark
+    theme: 'dark',        // auto | light | dark
     voiceURI: '',         // voz francesa escolhida ('' = melhor disponível)
     dialect: 'fr-FR',     // fr-FR | fr-CA | fr-BE | fr-CH
     rate: 0.95,
@@ -27,6 +27,8 @@ const DEFAULTS = {
   sounds: {},    // id → { best, at }
   decks: [],     // decks ativos, na ordem de estudo
   counters: {},  // contadores livres (ditados, frases faladas…)
+  achievements: {}, // id → timestamp de conquista
+  streakFreezes: 0, // protetores de ofensiva guardados
 };
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -95,10 +97,50 @@ export function addMinutes(min) {
 /** Dias seguidos com atividade. Hoje só conta depois do primeiro XP. */
 export function streak() {
   const d = new Date();
-  if (!(state.days[dayKey(d)]?.xp > 0)) d.setDate(d.getDate() - 1);
+  const todayK = dayKey(d);
+  if (!(state.days[todayK]?.xp > 0)) {
+    d.setDate(d.getDate() - 1);
+    const yestK = dayKey(d);
+    // Auto-ativa protetor de ofensiva se ontem foi perdido e anteontem teve atividade
+    if (!state.days[yestK]?.xp && !state.days[yestK]?.frozen) {
+      const before = new Date(d);
+      before.setDate(before.getDate() - 1);
+      if (state.days[dayKey(before)]?.xp > 0 && (state.streakFreezes || 0) > 0) {
+        state.streakFreezes = Math.max(0, state.streakFreezes - 1);
+        state.days[yestK] = { xp: 1, frozen: true, reviews: 0, news: 0, lessons: 0, minutes: 0 };
+        save();
+      }
+    }
+  }
   let n = 0;
-  while (state.days[dayKey(d)]?.xp > 0) { n++; d.setDate(d.getDate() - 1); }
+  while ((state.days[dayKey(d)]?.xp > 0) || state.days[dayKey(d)]?.frozen) {
+    n++;
+    d.setDate(d.getDate() - 1);
+  }
   return n;
+}
+
+export function buyStreakFreeze(cost = 100) {
+  if (state.xp < cost) return { ok: false, msg: 'XP insuficiente (custa 100 XP).' };
+  if ((state.streakFreezes || 0) >= 2) return { ok: false, msg: 'Você já tem o máximo de 2 protetores guardados!' };
+  state.xp -= cost;
+  state.streakFreezes = (state.streakFreezes || 0) + 1;
+  save();
+  window.dispatchEvent(new CustomEvent('pont:change'));
+  return { ok: true, msg: 'Protetor de Ofensiva ativado! 🛡️' };
+}
+
+export function unlockAchievement(id) {
+  if (!state.achievements) state.achievements = {};
+  if (state.achievements[id]) return false;
+  state.achievements[id] = Date.now();
+  save();
+  window.dispatchEvent(new CustomEvent('pont:achievement', { detail: id }));
+  return true;
+}
+
+export function hasAchievement(id) {
+  return !!state.achievements?.[id];
 }
 
 export function bestStreak() {

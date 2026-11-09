@@ -8,27 +8,39 @@ const DOT = { new: '', learning: 'l', young: 'r', mature: 'm' };
 function list(root) {
   const draw = () => {
     const active = new Set(activeDecks().map((d) => d.id));
+    const totalWords = DECKS.reduce((n, d) => n + d.words.length, 0);
     mount(root, html`
-      ${pageHead('Baralhos', { back: '#/review', sub: `${DECKS.reduce((n, d) => n + d.words.length, 0)} palavras em ${DECKS.length} temas` })}
-      <p class="small muted">As palavras novas saem dos baralhos ativos, na ordem abaixo. Quando um acaba, o próximo é ativado sozinho.</p>
-      <div class="row wrap small muted" style="gap:14px;margin:6px 0 14px">
-        <span class="row" style="gap:6px"><i class="dot-state"></i> nova</span>
-        <span class="row" style="gap:6px"><i class="dot-state l"></i> aprendendo</span>
-        <span class="row" style="gap:6px"><i class="dot-state r"></i> jovem</span>
-        <span class="row" style="gap:6px"><i class="dot-state m"></i> madura (21+ dias)</span>
+      ${pageHead('Cofre de Vocabulário', { back: '#/review', sub: `${totalWords} vocábulos distribuídos em ${DECKS.length} coleções temáticas` })}
+      <p class="small muted">As palavras novas emergem das coleções ativas, na sequência abaixo. Quando uma coleção é dominada, a seguinte ativa-se automaticamente.</p>
+      <div class="row wrap small muted" style="gap:16px;margin:10px 0 18px">
+        <span class="row" style="gap:6px"><i class="dot-state"></i> Inédita</span>
+        <span class="row" style="gap:6px"><i class="dot-state l"></i> Em aprendizado</span>
+        <span class="row" style="gap:6px"><i class="dot-state r"></i> Recente</span>
+        <span class="row" style="gap:6px"><i class="dot-state m"></i> Consolidada (21+ dias)</span>
       </div>
-      <div class="list">${DECKS.map((d) => {
+      <div class="bento-grid-2">${DECKS.map((d, idx) => {
         const s = deckStats(d);
         const on = active.has(d.id);
-        return html`<div class="item">
-          <a class="ico" href="#/deck/${d.id}" style="font-size:1.4rem">${d.icon}</a>
-          <a class="grow" href="#/deck/${d.id}">
-            <b>${d.title}</b> <span class="tag">${d.level}</span><br>
-            <span class="small muted">${d.desc}</span>
-            <div class="bar thin" style="margin-top:8px"><i style="width:${(s.seen / s.total) * 100}%"></i></div>
-            <span class="tiny faint">${s.seen}/${s.total} vistas · ${s.mature} maduras</span>
+        const pct = Math.round((s.seen / s.total) * 100);
+        return html`< div class="card stack-sm" style = "display:flex;flex-direction:column;justify-content:space-between" >
+          <div class="row between">
+            <a class="row" href="#/deck/${d.id}" style="gap:12px">
+              <span class="bi-ico" style="font-size:1.35rem">${d.icon}</span>
+              <div>
+                <span class="bento-index">COLLECTION ${String(idx + 1).padStart(2, '0')} · ${d.level}</span>
+                <div class="h3" style="font-size:1.12rem;color:#fff">${d.title}</div>
+              </div>
+            </a>
+            <label class="switch" title="${on ? 'Ativo' : 'Inativo'}"><input type="checkbox" data-deck="${d.id}" ${on ? 'checked' : ''}><span></span></label>
+          </div>
+          <a href="#/deck/${d.id}" class="stack-sm" style="margin-top:8px">
+            <p class="small muted" style="margin:0">${d.desc}</p>
+            <div class="bar thin" style="margin-top:10px"><i style="width:${pct}%"></i></div>
+            <div class="row between tiny faint" style="margin-top:4px">
+              <span>${s.seen}/${s.total} estudadas (${pct}%)</span>
+              <span>${s.mature} consolidadas →</span>
+            </div>
           </a>
-          <label class="switch" title="${on ? 'Ativo' : 'Inativo'}"><input type="checkbox" data-deck="${d.id}" ${on ? 'checked' : ''}><span></span></label>
         </div>`;
       })}</div>`);
   };
