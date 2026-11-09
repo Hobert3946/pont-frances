@@ -10,48 +10,47 @@ function list(root) {
   const st = getState();
   const practiced = SOUNDS.filter((s) => st.sounds[s.id]?.best != null).length;
   mount(root, html`
-    <section class="editorial-mast">
-      <div class="mast-meta">
-        <span class="mast-issue">LABORATOIRE ACOUSTIQUE</span>
-        <span class="mast-sep">◆</span>
-        <span class="mast-date">${practiced} DE ${SOUNDS.length} FONEMAS CALIBRADOS</span>
+    <header style="margin-bottom:24px;padding-top:8px">
+      <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+        <span class="tag ok">LABORATÓRIO DE PRONÚNCIA</span>
+        <span class="small muted">${practiced} de ${SOUNDS.length} sons praticados</span>
       </div>
-      <div class="mast-headline">
-        <h1 class="h1">Phonétique & <span class="grad-text">Voix</span><em>.</em></h1>
-        <p class="mast-sub">Domine os fonemas que não existem em português com análise espectral e avaliação de pronúncia em tempo real.</p>
-      </div>
-    </section>
+      <h1 class="h1" style="font-size:clamp(1.7rem, 1.3rem + 1.6vw, 2.3rem);margin:0 0 6px">
+        Fonética & Treino de Fala
+      </h1>
+      <p class="small muted" style="margin:0;font-size:1.02rem;max-width:65ch">
+        Domine os sons que não existem em português através de comparações práticas, áudio gravado por nativos e testes no microfone.
+      </p>
+    </header>
 
     <div class="bento-grid-2">
-      <a class="bento-item featured" href="#/shadow">
-        <div class="bi-head">
-          <span class="bi-idx">STUDIO 01 · PROSODIE</span>
-          <span class="bi-ico">${icon('waves')}</span>
+      <a class="card link stack-sm featured" href="#/shadow" style="background:var(--surface);padding:22px;justify-content:space-between">
+        <div>
+          <div class="row between" style="margin-bottom:12px">
+            <span class="tag fr">RITMO & ENTONAÇÃO</span>
+            ${icon('waves')}
+          </div>
+          <h3 class="h3" style="color:var(--text-strong);font-size:1.2rem;margin:0 0 6px">Shadowing Acústico</h3>
+          <p class="small muted" style="margin:0;line-height:1.5">Ouça um falante nativo e repita simultaneamente no mesmo ritmo e entonação. O melhor método para destravar a fala.</p>
         </div>
-        <div class="bi-body">
-          <div class="bi-tag">IMITATION RYTHMIQUE</div>
-          <h3 class="bi-title">Shadowing Acústico</h3>
-          <p class="bi-desc">Ouça um falante nativo e repita simultaneamente no mesmo ritmo e entonação. O treino definitivo de fluidez oral.</p>
-        </div>
-        <div class="bi-foot">
-          <span>Iniciar estúdio de voz</span>
-          <span class="bi-arrow">→</span>
+        <div class="row between" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:0.88rem;color:var(--primary);font-weight:600">
+          <span>Praticar</span>
+          <span>→</span>
         </div>
       </a>
 
-      <a class="bento-item featured" href="#/listen">
-        <div class="bi-head">
-          <span class="bi-idx">STUDIO 02 · PERCEPTION</span>
-          <span class="bi-ico">${icon('headphones')}</span>
+      <a class="card link stack-sm featured" href="#/listen" style="background:var(--surface);padding:22px;justify-content:space-between">
+        <div>
+          <div class="row between" style="margin-bottom:12px">
+            <span class="tag ok">COMPREENSÃO ORAL</span>
+            ${icon('headphones')}
+          </div>
+          <h3 class="h3" style="color:var(--text-strong);font-size:1.2rem;margin:0 0 6px">Ditado Auditivo</h3>
+          <p class="small muted" style="margin:0;line-height:1.5">Ouça frases práticas, escreva o que ouviu e receba correção detalhada para treinar o ouvido e a ortografia.</p>
         </div>
-        <div class="bi-body">
-          <div class="bi-tag">ACUITÉ AUDITIVE</div>
-          <h3 class="bi-title">Ditado de Precisão</h3>
-          <p class="bi-desc">Ouça frases graduadas, transcreva e receba diagnóstico ortográfico detalhado palavra por palavra.</p>
-        </div>
-        <div class="bi-foot">
-          <span>Iniciar sessão de escuta</span>
-          <span class="bi-arrow">→</span>
+        <div class="row between" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:0.88rem;color:var(--primary);font-weight:600">
+          <span>Praticar</span>
+          <span>→</span>
         </div>
       </a>
     </div>

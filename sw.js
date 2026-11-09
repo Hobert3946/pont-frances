@@ -1,5 +1,5 @@
 // Service worker do Pont: funciona offline e se atualiza sozinho.
-const VERSION = 'pont-v3.3.0';
+const VERSION = 'pont-v4.0.0';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest',
   'css/base.css', 'css/components.css',

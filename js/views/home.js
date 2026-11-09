@@ -1,13 +1,11 @@
-// Painel "Aujourd'hui": Arquitetura Bento Grid editorial nível Awwwards.
+// Painel Principal: Dashboard amigável, limpo e direto ao ponto
 import { getState, settings, streak, bestStreak, dayKey } from '../store.js';
 import { counts, dueCount, newLeftToday, WORDS, DECKS } from '../srs.js';
 import { LESSONS } from '../data/lessons.js';
-import { SOUNDS } from '../data/sounds.js';
-import { getGuideProgress } from '../data/guide.js';
 import { DUO_LESSONS } from '../data/duo-lessons.js';
-import { html, mount, icon, ring, sayBtn, tapFr, frDate, pickDaily, plural } from '../ui.js';
+import { html, mount, icon, sayBtn, tapFr, pickDaily, plural } from '../ui.js';
 
-function heatmap(weeks = 22) {
+function heatmap(weeks = 20) {
   const days = getState().days;
   const end = new Date();
   const start = new Date(end);
@@ -26,23 +24,16 @@ function heatmap(weeks = 22) {
 export default function render(root) {
   const st = getState();
   const t = st.days[dayKey()] || { xp: 0, minutes: 0 };
-  const goal = settings().dailyGoal;
+  const goal = settings().dailyGoal || 30;
   const due = dueCount();
   const fresh = newLeftToday();
   const c = counts();
-  const nextLesson = LESSONS.find((l) => !st.lessons[l.id]) || LESSONS[0];
-  const lessonsDone = LESSONS.filter((l) => st.lessons[l.id]).length;
-  const sound = pickDaily(SOUNDS, 3);
   const word = pickDaily(WORDS.filter((w) => w.ex), 7);
-  const slang = pickDaily(DECKS.find((d) => d.id === 'familier').words, 11);
+  const slang = pickDaily(DECKS.find((d) => d.id === 'familier')?.words || WORDS, 11);
+
   const h = new Date().getHours();
   const hello = h < 5 || h >= 18 ? 'Bonsoir' : 'Bonjour';
-  const name = st.profile.name;
-  const sessionLabel = due + fresh ? `${plural(due, 'revisão', 'revisões')} · ${plural(fresh, 'nova', 'novas')}` : 'Memória sincronizada';
-  const goalReached = t.xp >= goal;
-
-  const guideInfo = getGuideProgress(st);
-  const curStep = guideInfo.currentStep;
+  const name = st.profile.name || '';
 
   st.duoLessons = st.duoLessons || {};
   const allDuoIds = Object.keys(DUO_LESSONS);
@@ -51,273 +42,205 @@ export default function render(root) {
   const duoDoneCount = allDuoIds.filter((id) => st.duoLessons[id]).length;
   const duoTotal = allDuoIds.length;
   const duoPct = Math.round((duoDoneCount / duoTotal) * 100);
-
-  const MODULES = [
-    {
-      idx: '01',
-      tag: 'MÉMOIRE FSRS-5',
-      title: 'Vocabulário & Cartões',
-      desc: due + fresh ? sessionLabel : 'Ciclo do dia concluído — adiante ou revise.',
-      href: '#/review',
-      ico: icon('cards'),
-      accent: true,
-    },
-    {
-      idx: '02',
-      tag: `GRAMMAIRE · ${nextLesson.level}`,
-      title: nextLesson.title,
-      desc: `${nextLesson.sub || 'Ponte estrutural PT → FR'} · ${nextLesson.min} min`,
-      href: `#/lesson/${nextLesson.id}`,
-      ico: icon('book'),
-      done: !!st.lessons[nextLesson.id],
-    },
-    {
-      idx: '03',
-      tag: `PHONÉTIQUE · ${sound.ipa}`,
-      title: `Som: ${sound.title}`,
-      desc: 'Calibragem acústica com avaliação por voz.',
-      href: `#/sound/${sound.id}`,
-      ico: html`<span class="fr" style="font-weight:700;font-size:1.05rem">${sound.sym.slice(0, 3)}</span>`,
-    },
-    {
-      idx: '04',
-      tag: 'CONTRE-LA-MONTRE',
-      title: 'Treino Relâmpago 60s',
-      desc: 'Desafio de reflexo lexical com multiplicador 3x.',
-      href: '#/speed',
-      ico: icon('zap'),
-    },
-    {
-      idx: '05',
-      tag: 'COMPRÉHENSION',
-      title: 'Ditado Auditivo',
-      desc: 'Escuta analítica e precisão ortográfica em 5 frases.',
-      href: '#/listen',
-      ico: icon('headphones'),
-    },
-    {
-      idx: '06',
-      tag: 'CONVERSATION IA',
-      title: 'Role-play com Camille',
-      desc: 'Simulação de cenários reais por voz com correção.',
-      href: '#/tutor',
-      ico: icon('sparkles'),
-    },
-  ];
+  const goalReached = t.xp >= goal;
 
   mount(root, html`
-    <!-- Editorial Masthead -->
-    <section class="editorial-mast">
-      <div class="mast-meta">
-        <span class="mast-issue">ÉDITION QUOTIDIENNE</span>
-        <span class="mast-sep">◆</span>
-        <span class="mast-date">${frDate()}</span>
-        <span class="mast-status"><i class="pulse-dot"></i> Memória FSRS ativa</span>
-      </div>
-      <div class="mast-headline">
-        <h1 class="h1">${hello}${name ? html`, <span class="grad-text">${name}</span>` : ''}<em>.</em></h1>
-        <p class="mast-sub">Seu francês construído sobre as pontes que você já tem: o português e o inglês.</p>
-      </div>
-    </section>
-
-    <!-- Trilha Prática Interativa Estilo Duolingo -->
-    <section class="card glow pad-lg" style="margin-bottom:28px;background:linear-gradient(135deg, rgba(226,189,90,0.12) 0%, rgba(14,16,21,0.96) 100%), var(--surface);border-color:rgba(226,189,90,0.42)">
-      <div class="bento-top-bar" style="margin-bottom:12px">
-        <div class="row wrap" style="gap:8px;align-items:center">
-          <span class="tag fr" style="background:var(--gold);color:#06070a;font-weight:750">MÉTODO DUOLINGO</span>
-          <span class="bento-index">LIÇÃO ${nextDuo.id} DE ${duoTotal} · ${nextDuo.title.toUpperCase()}</span>
-        </div>
-        <div class="row wrap" style="gap:10px;align-items:center">
-          <span class="small bold" style="color:var(--gold-bright)">${duoDoneCount}/${duoTotal} lições concluídas (${duoPct}%)</span>
-          <a class="btn btn-ghost btn-xs" href="#/learn">Ver Trilha Duolingo →</a>
-        </div>
-      </div>
-
-      <div class="row wrap between" style="gap:18px;align-items:center">
-        <div class="grow" style="max-width:740px">
-          <div class="row wrap" style="gap:8px;margin-bottom:6px;align-items:center">
-            <span class="bi-tag">PRÁTICA INTERATIVA</span>
-            <span class="tiny faint">⏱ ~2 min · Áudio Nativo + Microfone + Fixação</span>
+    <!-- Cabeçalho Principal -->
+    <header style="margin-bottom:24px;padding-top:8px">
+      <div class="row between wrap" style="gap:12px;align-items:flex-start">
+        <div>
+          <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+            <span class="tag ok">MÉTODO PONT</span>
+            <span class="small muted">Francês fácil & descomplicado</span>
           </div>
-          <h2 class="h2" style="font-size:clamp(1.35rem, 1.1rem + 1vw, 1.85rem);margin-bottom:6px">${nextDuo.title}: ${nextDuo.sub}</h2>
-          <p class="small muted" style="margin:0 0 10px;font-size:1.02rem;line-height:1.55">
-            Aprenda ouvindo a pronúncia clara, repita no microfone e fixe o vocabulário com desafios rápidos e divertidos.
+          <h1 class="h1" style="font-size:clamp(1.7rem, 1.3rem + 1.6vw, 2.3rem);margin:0 0 6px">
+            ${hello}${name ? `, ${name}` : ''}! 👋
+          </h1>
+          <p class="small muted" style="margin:0;font-size:1.02rem">
+            Pronto para praticar francês hoje? Apenas 2 minutos mantêm seu aprendizado ativo.
           </p>
         </div>
 
-        <div style="flex:none;min-width:min(100%, 200px);width:100%;max-width:240px">
-          <a class="btn btn-primary btn-lg btn-block" href="#/learn/${nextDuo.id}" style="padding:14px 20px">
-            ${icon('play')} Jogar Lição ${nextDuo.id}
+        <!-- Indicadores Rápidos de Ofensiva e Meta -->
+        <div class="row" style="gap:10px;align-items:center">
+          <div class="card pad-xs row center" style="gap:8px;padding:8px 14px;background:var(--surface)">
+            <span style="font-size:1.2rem">🔥</span>
+            <div>
+              <b style="color:var(--text-strong);font-size:1.05rem">${streak()}</b>
+              <span class="tiny muted" style="display:block;margin-top:-2px">${streak() === 1 ? 'dia' : 'dias'} de ofensiva</span>
+            </div>
+          </div>
+          <div class="card pad-xs row center" style="gap:8px;padding:8px 14px;background:var(--surface)">
+            <span style="font-size:1.2rem">⚡</span>
+            <div>
+              <b style="color:var(--primary);font-size:1.05rem">${t.xp}/${goal} XP</b>
+              <span class="tiny muted" style="display:block;margin-top:-2px">${goalReached ? 'Meta batida! 🎉' : 'Meta de hoje'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Card Destaque: Continuar Lição da Trilha -->
+    <section class="card pad-lg stack" style="margin-bottom:24px;background:var(--surface);border-color:rgba(34,197,94,0.35);box-shadow:0 6px 20px rgba(0,0,0,0.25)">
+      <div class="row between wrap" style="gap:10px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border)">
+        <div class="row" style="gap:8px;align-items:center">
+          <span class="tag ok">SUA PRÓXIMA LIÇÃO</span>
+          <span class="small bold" style="color:var(--text-strong)">Lição ${nextDuo.id} de ${duoTotal}</span>
+        </div>
+        <div class="row" style="gap:10px;align-items:center">
+          <span class="small muted">${duoDoneCount}/${duoTotal} concluídas (${duoPct}%)</span>
+          <a class="btn btn-ghost btn-xs" href="#/learn">Ver Trilha Completa →</a>
+        </div>
+      </div>
+
+      <div class="row wrap between" style="gap:18px;align-items:center;margin-top:4px">
+        <div class="grow" style="max-width:680px">
+          <h2 class="h2" style="font-size:clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem);margin:0 0 6px">
+            ${nextDuo.title}: ${nextDuo.sub}
+          </h2>
+          <p class="small muted" style="margin:0;font-size:1rem;line-height:1.55">
+            Aulas interativas curtas: ouça o áudio com nativos, treine a pronúncia no microfone e fixe com exercícios práticos.
+          </p>
+        </div>
+
+        <div style="flex:none;min-width:min(100%, 220px)">
+          <a class="btn btn-primary btn-lg btn-block" href="#/learn/${nextDuo.id}" style="padding:14px 22px;font-size:1.05rem">
+            ${icon('play')} Continuar Lição (2 min)
           </a>
         </div>
       </div>
-      
-      <div class="bar" style="margin-top:16px;height:7px"><i style="width:${Math.max(5, duoPct)}%"></i></div>
+
+      <!-- Barra de Progresso da Trilha -->
+      <div style="margin-top:12px">
+        <div class="bar" style="height:8px"><i style="width:${Math.max(5, duoPct)}%;background:var(--primary)"></i></div>
+      </div>
     </section>
 
-    <!-- Primary Asymmetric Bento Grid -->
-    <div class="bento-hero-grid">
-      <!-- Left: Horological Command Module -->
-      <section class="card hero glow bento-command">
-        <div class="bento-top-bar">
-          <span class="bento-index">00 / CADRAN DU JOUR</span>
-          <span class="tag ${goalReached ? 'ok' : 'fr'}">${goalReached ? 'OBJECTIF ATTEINT ✦' : 'EN COURS'}</span>
-        </div>
-
-        <div class="command-body">
-          <div class="command-dial">
-            ${ring(t.xp / goal, {
-    size: 168,
-    sw: 9,
-    label: html`<div class="dial-readout">
-                <span class="dial-eyebrow">AUJOURD'HUI</span>
-                <b class="dial-val">${t.xp}</b>
-                <span class="dial-sub">/ ${goal} XP</span>
-              </div>`,
-  })}
+    <!-- Grade de Acesso Rápido -->
+    <div style="margin-bottom:28px">
+      <h2 class="h3" style="font-size:1.15rem;margin:0 0 14px;color:var(--text-strong)">Atividades de Aprendizado</h2>
+      <div class="bento-grid-2">
+        <!-- Trilha Duolingo -->
+        <a class="card link stack-sm" href="#/learn" style="background:var(--surface)">
+          <div class="row between">
+            <span class="tag ok">PASSO A PASSO</span>
+            <span style="font-size:1.4rem">🗺️</span>
           </div>
-
-          <div class="command-info">
-            <h2 class="h2">${goalReached ? 'Meta diária conquistada.' : 'Sua sessão diária aguarda.'}</h2>
-            <p class="small muted" style="margin-bottom:14px">${sessionLabel} agendadas pelo algoritmo de retenção espaçada.</p>
-
-            <div class="telemetry-strip">
-              <div class="tel-pill">
-                ${icon('flame')}
-                <div><b>${streak()}</b><span>${streak() === 1 ? 'dia' : 'dias'}</span></div>
-              </div>
-              <div class="tel-pill">
-                ${icon('clock')}
-                <div><b>${Math.round(t.minutes || 0)}</b><span>min</span></div>
-              </div>
-              <a class="tel-pill" href="#/stats" title="Protetores de Ofensiva">
-                ${icon('shield')}
-                <div><b>${st.streakFreezes || 0}/2</b><span>escudos</span></div>
-              </a>
-            </div>
-
-            <div class="command-actions">
-              <a class="btn btn-primary btn-lg" href="#/review">
-                ${icon('play')} Iniciar Sessão
-              </a>
-              <a class="btn btn-ghost btn-lg" href="#/reader">
-                ${icon('book')} Leitor Bilíngue
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Right: Lexicon & Idiom Showcase -->
-      <div class="bento-showcase-stack">
-        <section class="card bento-lexicon">
-          <div class="bento-top-bar">
-            <span class="bento-index">LEXIQUE · MOT DU JOUR</span>
-            ${sayBtn(word.fr, 'sm')}
-          </div>
-          <div class="lex-word fr">${word.display}</div>
-          <div class="lex-bridges">
-            <span class="tag pt">PT</span> <span>${word.pt}</span>
-            <span class="lex-dot">·</span>
-            <span class="tag en">EN</span> <span class="muted">${word.en}</span>
-          </div>
-          <blockquote class="lex-quote">
-            <div class="fr">${tapFr(word.ex)}</div>
-            <div class="tiny muted">${word.exPt}</div>
-          </blockquote>
-        </section>
-
-        <section class="card bento-lexicon">
-          <div class="bento-top-bar">
-            <span class="bento-index">ARGOT · COMME ON DIT</span>
-            ${sayBtn(slang.fr, 'sm')}
-          </div>
-          <div class="lex-word fr">${slang.display}</div>
-          <div class="lex-bridges">
-            <span class="tag fr">FRANCÊS FALADO</span> <span>${slang.pt}</span>
-          </div>
-          <blockquote class="lex-quote">
-            <div class="fr">${tapFr(slang.ex)}</div>
-            <div class="tiny muted">${slang.exPt}</div>
-          </blockquote>
-        </section>
-      </div>
-    </div>
-
-    <!-- Curriculum Bento Grid -->
-    <div class="section-header">
-      <div>
-        <span class="eyebrow">ARCHITECTURE D'ÉTUDE</span>
-        <h2>Parcours d'Aujourd'hui</h2>
-      </div>
-      <a class="btn btn-ghost btn-sm" href="#/explore">Ver todas as ferramentas ${icon('arrow')}</a>
-    </div>
-
-    <div class="bento-grid-3">
-      ${MODULES.map((m) => html`
-        <a class="bento-item ${m.accent ? 'featured' : ''} ${m.done ? 'done' : ''}" href="${m.href}">
-          <div class="bi-head">
-            <span class="bi-idx">${m.idx}</span>
-            <span class="bi-ico">${m.ico}</span>
-          </div>
-          <div class="bi-body">
-            <div class="bi-tag">${m.tag}</div>
-            <h3 class="bi-title">${m.title}</h3>
-            <p class="bi-desc">${m.desc}</p>
-          </div>
-          <div class="bi-foot">
-            <span>${m.done ? 'Concluído ✓' : 'Acessar módulo'}</span>
-            <span class="bi-arrow">→</span>
+          <div class="h3" style="color:var(--text-strong);margin:4px 0 2px">Trilha de Lições</div>
+          <p class="small muted" style="margin:0">Lições interativas estruturadas do zero até conversação diária.</p>
+          <div class="row between" style="margin-top:10px;font-size:0.88rem;color:var(--primary);font-weight:600">
+            <span>${duoDoneCount}/${duoTotal} lições feitas</span>
+            <span>Acessar →</span>
           </div>
         </a>
-      `)}
+
+        <!-- Revisão com Repetição Espaçada -->
+        <a class="card link stack-sm" href="#/review" style="background:var(--surface)">
+          <div class="row between">
+            <span class="tag ${due > 0 ? 'warn' : 'ok'}">${due > 0 ? `${due} PENDENTES` : 'MEMÓRIA EM DIA'}</span>
+            <span style="font-size:1.4rem">🗂️</span>
+          </div>
+          <div class="h3" style="color:var(--text-strong);margin:4px 0 2px">Revisar Palavras</div>
+          <p class="small muted" style="margin:0">${due ? `${plural(due, 'palavra aguarda', 'palavras aguardam')} revisão inteligente.` : 'Todas as palavras revisadas por hoje!'}</p>
+          <div class="row between" style="margin-top:10px;font-size:0.88rem;color:var(--primary);font-weight:600">
+            <span>${c.young + c.mature} palavras aprendidas</span>
+            <span>Revisar →</span>
+          </div>
+        </a>
+
+        <!-- Treino de Pronúncia -->
+        <a class="card link stack-sm" href="#/speak" style="background:var(--surface)">
+          <div class="row between">
+            <span class="tag fr">MICROFONE</span>
+            <span style="font-size:1.4rem">🎙️</span>
+          </div>
+          <div class="h3" style="color:var(--text-strong);margin:4px 0 2px">Treino de Pronúncia</div>
+          <p class="small muted" style="margin:0">Fale no microfone e receba pontuação e correções imediatas de fonética.</p>
+          <div class="row between" style="margin-top:10px;font-size:0.88rem;color:var(--primary);font-weight:600">
+            <span>Sons do francês</span>
+            <span>Praticar →</span>
+          </div>
+        </a>
+
+        <!-- Conversação com Camille -->
+        <a class="card link stack-sm" href="#/tutor" style="background:var(--surface)">
+          <div class="row between">
+            <span class="tag ok">DIÁLOGO IA</span>
+            <span style="font-size:1.4rem">💬</span>
+          </div>
+          <div class="h3" style="color:var(--text-strong);margin:4px 0 2px">Conversar com Camille</div>
+          <p class="small muted" style="margin:0">Pratique diálogos em francês em cenários como café, hotel e viagens.</p>
+          <div class="row between" style="margin-top:10px;font-size:0.88rem;color:var(--primary);font-weight:600">
+            <span>Simulações reais</span>
+            <span>Conversar →</span>
+          </div>
+        </a>
+      </div>
     </div>
 
-    <!-- Telemetry & Chronology Matrix -->
-    <div class="section-header">
-      <div>
-        <span class="eyebrow">TÉLÉMÉTRIE & MÉMOIRE</span>
-        <h2>Chronologie de Maîtrise</h2>
+    <!-- Vocabulário do Dia -->
+    <div style="margin-bottom:28px">
+      <div class="row between" style="margin-bottom:14px;align-items:baseline">
+        <h2 class="h3" style="font-size:1.15rem;margin:0;color:var(--text-strong)">Vocabulário de Hoje</h2>
+        <span class="small muted">Atualizado diariamente</span>
       </div>
-      <span class="small muted">Recorde: <b style="color:var(--gold-light)">${plural(bestStreak(), 'dia consecutivo', 'dias consecutivos')}</b></span>
+
+      <div class="bento-grid-2">
+        <!-- Palavra do Dia -->
+        <section class="card stack-sm" style="background:var(--surface);padding:22px">
+          <div class="row between" style="margin-bottom:6px">
+            <span class="tag ok">PALAVRA DO DIA</span>
+            ${sayBtn(word.fr, 'sm')}
+          </div>
+          <div class="h2" style="font-size:1.8rem;margin:4px 0;color:var(--text-strong)">${word.display}</div>
+          <div class="row" style="gap:8px;align-items:center;margin-bottom:12px;font-size:1rem">
+            <span class="tag pt">PT</span>
+            <span style="color:var(--text-strong);font-weight:600">${word.pt}</span>
+            <span class="muted" style="margin-left:4px">(${word.en})</span>
+          </div>
+          <div style="padding:12px 14px;border-radius:10px;background:var(--surface-2);border-left:3px solid var(--primary)">
+            <div style="font-size:1.02rem;color:var(--text-strong);line-height:1.4">${tapFr(word.ex)}</div>
+            <div class="small muted" style="margin-top:4px">${word.exPt}</div>
+          </div>
+        </section>
+
+        <!-- Expressão do Francês Falado -->
+        <section class="card stack-sm" style="background:var(--surface);padding:22px">
+          <div class="row between" style="margin-bottom:6px">
+            <span class="tag fr">FRANCÊS DO DIA A DIA</span>
+            ${sayBtn(slang.fr, 'sm')}
+          </div>
+          <div class="h2" style="font-size:1.8rem;margin:4px 0;color:var(--text-strong)">${slang.display}</div>
+          <div class="row" style="gap:8px;align-items:center;margin-bottom:12px;font-size:1rem">
+            <span class="tag fr">GÍRIA / EXPRESSÃO</span>
+            <span style="color:var(--text-strong);font-weight:600">${slang.pt}</span>
+          </div>
+          <div style="padding:12px 14px;border-radius:10px;background:var(--surface-2);border-left:3px solid var(--blue)">
+            <div style="font-size:1.02rem;color:var(--text-strong);line-height:1.4">${tapFr(slang.ex)}</div>
+            <div class="small muted" style="margin-top:4px">${slang.exPt}</div>
+          </div>
+        </section>
+      </div>
     </div>
 
-    <div class="kpis">
-      <div class="kpi">
-        <span class="kpi-idx">I · VOCABULAIRE</span>
-        <b>${c.young + c.mature}</b>
-        <span>palavras ativas</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-idx">II · CONSOLIDATION</span>
-        <b>${c.mature}</b>
-        <span>memória de longo prazo</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-idx">III · GRAMMAIRE</span>
-        <b>${lessonsDone}<small style="font-size:.55em;color:var(--text-3)">/${LESSONS.length}</small></b>
-        <span>lições dominadas</span>
-      </div>
-      <div class="kpi">
-        <span class="kpi-idx">IV · EXPÉRIENCE</span>
-        <b>${st.xp.toLocaleString('pt-BR')}</b>
-        <span>pontos de maestria (XP)</span>
-      </div>
-    </div>
-
-    <section class="card pad-lg" style="margin-top:14px">
-      <div class="row between wrap" style="margin-bottom:14px">
+    <!-- Estatísticas & Constância -->
+    <section class="card pad-lg" style="margin-bottom:20px;background:var(--surface)">
+      <div class="row between wrap" style="gap:10px;margin-bottom:16px;align-items:center">
         <div>
-          <span class="bento-index">MATRICE D'ACTIVITÉ · 22 SEMAINES</span>
-          <div class="h3" style="margin-top:2px">Constância Diária</div>
+          <div class="h3" style="color:var(--text-strong);margin:0">Constância de Estudos</div>
+          <span class="small muted">Atividade registrada nas últimas 20 semanas</span>
         </div>
-        <div class="heat-legend">
-          <span>Menos</span>
-          <i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i>
-          <span>Mais</span>
+        <div class="row" style="gap:14px;align-items:center">
+          <span class="small muted">Recorde: <b style="color:var(--primary)">${plural(bestStreak(), 'dia seguido', 'dias seguidos')}</b></span>
+          <div class="heat-legend">
+            <span>Menos</span>
+            <i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i>
+            <span>Mais</span>
+          </div>
         </div>
       </div>
-      ${heatmap(22)}
+      ${heatmap(20)}
     </section>
   `);
 }

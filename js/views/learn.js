@@ -29,25 +29,26 @@ function renderPath(root) {
   const nextLessonId = allLessonIds.find((id) => !st.duoLessons[id]) || '1';
 
   mount(root, html`
-    <section class="editorial-mast">
-      <div class="mast-meta">
-        <span class="mast-issue">TRILHA INTERATIVA</span>
-        <span class="mast-sep">◆</span>
-        <span class="mast-date">APRENDA DO ZERO PASSO A PASSO</span>
+    <header style="margin-bottom:24px;padding-top:8px">
+      <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+        <span class="tag ok">MÉTODO PASSO A PASSO</span>
+        <span class="small muted">Aprenda do zero com áudio e pronúncia</span>
       </div>
-      <div class="mast-headline">
-        <h1 class="h1">Caminho <span class="grad-text">Duolingo</span><em>.</em></h1>
-        <p class="mast-sub">Aulas interativas curtas de 2 minutos. Ouça a pronúncia nativa, treine no microfone e fixe o vocabulário sem decoreba.</p>
-      </div>
-    </section>
+      <h1 class="h1" style="font-size:clamp(1.7rem, 1.3rem + 1.6vw, 2.3rem);margin:0 0 6px">
+        Trilha de Lições Interativas
+      </h1>
+      <p class="small muted" style="margin:0;font-size:1.02rem;max-width:65ch">
+        Aulas curtas de 2 minutos. Ouça a pronúncia nativa, treine no microfone e fixe o vocabulário sem decoreba.
+      </p>
+    </header>
 
     <!-- Card Destaque: Continuar de onde parou -->
-    <div class="card glow pad-lg" style="margin-top:20px;background:linear-gradient(135deg, rgba(226,189,90,0.12) 0%, rgba(14,16,21,0.95) 100%), var(--surface);border-color:rgba(226,189,90,0.4)">
+    <div class="card pad-lg stack" style="margin-top:20px;background:var(--surface);border-color:rgba(34,197,94,0.35);box-shadow:0 6px 20px rgba(0,0,0,0.25)">
       <div class="row wrap between" style="gap:16px;align-items:center">
         <div>
-          <span class="tag fr" style="margin-bottom:8px">SEU PRÓXIMO PASSO</span>
-          <h2 class="h2" style="font-size:1.5rem">Lição ${nextLessonId}: ${DUO_LESSONS[nextLessonId].title}</h2>
-          <p class="small muted" style="margin:4px 0 0">${DUO_LESSONS[nextLessonId].sub}</p>
+          <span class="tag ok" style="margin-bottom:8px">SEU PRÓXIMO PASSO</span>
+          <h2 class="h2" style="font-size:1.5rem;margin:4px 0 2px">Lição ${nextLessonId}: ${DUO_LESSONS[nextLessonId].title}</h2>
+          <p class="small muted" style="margin:0">${DUO_LESSONS[nextLessonId].sub}</p>
         </div>
         <a class="btn btn-primary btn-lg" href="#/learn/${nextLessonId}">
           ${icon('play')} Começar Lição ${nextLessonId}
@@ -609,3 +610,4 @@ function getNextLessonId(curId) {
   const idx = ids.indexOf(curId);
   return idx !== -1 && idx < ids.length - 1 ? ids[idx + 1] : null;
 }
+

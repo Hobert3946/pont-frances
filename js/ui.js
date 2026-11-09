@@ -107,12 +107,10 @@ export function ring(pct, { size = 136, sw = 8, label = '' } = {}) {
     <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
       <defs>
         <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#f7e6ad"/>
-          <stop offset="45%" stop-color="#e2bd5a"/>
-          <stop offset="100%" stop-color="#b08a2e"/>
+          <stop offset="0%" stop-color="#4ade80"/>
+          <stop offset="100%" stop-color="#22c55e"/>
         </linearGradient>
       </defs>
-      <circle cx="${c}" cy="${c}" r="${outerR}" stroke="rgba(226,189,90,0.35)" stroke-width="4" stroke-dasharray="1.2 ${((2 * Math.PI * outerR) / 60 - 1.2).toFixed(2)}"/>
       <circle class="track" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}"/>
       <circle class="val" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}" stroke="url(#${id})" stroke-dasharray="${C}" stroke-dashoffset="${off}" style="--c:${C}"/>
     </svg><div class="label">${label}</div></div>`;

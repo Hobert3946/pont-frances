@@ -12,18 +12,19 @@ function list(root) {
   const done = LESSONS.filter((l) => st.lessons[l.id]).length;
   const pct = Math.round((done / LESSONS.length) * 100);
   mount(root, html`
-    <section class="editorial-mast">
-      <div class="mast-meta">
-        <span class="mast-issue">CURRICULUM CONTRASTIF</span>
-        <span class="mast-sep">◆</span>
-        <span class="mast-date">${done} DE ${LESSONS.length} DOSSIÊS CONCLUÍDOS (${pct}%)</span>
+    <header style="margin-bottom:24px;padding-top:8px">
+      <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+        <span class="tag ok">GRAMÁTICA & ESTRUTURA</span>
+        <span class="small muted">${done} de ${LESSONS.length} aulas concluídas (${pct}%)</span>
       </div>
-      <div class="mast-headline">
-        <h1 class="h1">Grammaire <span class="grad-text">Pont</span><em>.</em></h1>
-        <p class="mast-sub">Dossiês concisos e diretos: cada capítulo revela onde o português e o inglês aceleram seu francês — e onde armam ciladas.</p>
-      </div>
-      <div class="bar" style="margin-top:16px"><i style="width:${pct}%"></i></div>
-    </section>
+      <h1 class="h1" style="font-size:clamp(1.7rem, 1.3rem + 1.6vw, 2.3rem);margin:0 0 6px">
+        Aulas de Gramática
+      </h1>
+      <p class="small muted" style="margin:0;font-size:1.02rem;max-width:65ch">
+        Aulas práticas e diretas mostrando como o português facilita o aprendizado do francês e onde ter atenção, sempre com quizzes para fixação.
+      </p>
+      <div class="bar" style="margin-top:16px;height:8px"><i style="width:${pct}%;background:var(--primary)"></i></div>
+    </header>
 
     ${LEVELS.map((lv, lIdx) => html`
       <div class="section-header" style="margin-top:${lIdx === 0 ? '12px' : '36px'}">

@@ -1,88 +1,88 @@
-// Atelier (Explorar): Instrumentarium completo do Pont em Bento Grid + curadoria cultural.
+// Explorar: Ferramentas completas de estudo e imersão cultural.
 import { html, mount, icon } from '../ui.js';
 
 const TOOLS = [
-  ['00', '#/learn', 'sparkles', 'MÉTODO DUOLINGO', 'Aulas Interativas (Do Zero ao B1)', 'Prática rápida com áudio nativo, treino de pronúncia no microfone e fixação dinâmica.', true],
-  ['01', '#/guide', 'compass', 'ROTEIRO GUIADO', 'Trilha Passo a Passo (A0 → B1)', 'Sequência pedagógica estruturada em 19 passos e 5 fases para aprender do zero sem se perder.', true],
-  ['02', '#/tutor', 'chat', 'CONVERSATION IA', 'Tutor com IA (Camille)', 'Role-play por voz em cenários parisienses com correção gramatical instantânea.', true],
-  ['02', '#/speed', 'zap', 'RÉFLEXE LEXICAL', 'Treino Relâmpago 60s', 'Desafio contra o relógio com multiplicadores de combo até 3x.', true],
-  ['03', '#/reader', 'book', 'LECTURE BILINGUE', 'Leitor Graduado', 'Contos A1–B1 com áudio sincronizado e dicionário ao toque.', false],
-  ['04', '#/bridges', 'bridge', 'ÉTYMOLOGIE & PONTS', 'Pontes PT → FR → EN', '16 padrões morfológicos de conversão direta e 33 falsos amigos.', false],
-  ['05', '#/verbs', 'table', 'SYSTÈME VERBAL', 'Motor de Conjugação', '77 verbos essenciais conjugados em 7 tempos com áudio e treino.', false],
-  ['06', '#/listen', 'headphones', 'COMPRÉHENSION', 'Ditado Auditivo', 'Escuta de alta precisão com diagnóstico ortográfico palavra por palavra.', false],
-  ['07', '#/shadow', 'waves', 'PROSODIE & RYTHME', 'Shadowing Acústico', 'Imitação de cadência e melodia nativa com espectrograma de voz.', false],
-  ['08', '#/phrases', 'bubble', 'SITUATIONS RÉELLES', 'Guia de Frases', 'Expressões indispensáveis para café, hotel, TI, aeroporto e saúde.', false],
-  ['09', '#/decks', 'layers', 'COLLECTION FSRS-5', 'Cofre de Vocabulário', '500+ palavras em 17 coleções temáticas (incluindo TI, Viagem e Québec).', false],
-  ['10', '#/lessons', 'book', 'ARCHITECTURE A1–B1', 'Lições de Gramática', '21 dossiês contrastivos mostrando onde o português ajuda e onde engana.', false],
-  ['11', '#/stats', 'trophy', 'TÉLÉMÉTRIE & BADGES', 'Conquistas & Métricas', 'Curva de retenção FSRS, precisão fonética e galeria de medalhas.', false],
-  ['12', '#/settings', 'gauge', 'PRÉFÉRENCES', 'Ajustes & Backup', 'Vozes neurais, sotaques francófonos, retenção-alvo e exportação JSON.', false],
+  ['01', '#/learn', 'sparkles', 'AULAS INTERATIVAS', 'Trilha Duolingo (A0 → B1)', 'Prática rápida com áudio nativo, treino de pronúncia no microfone e fixação dinâmica.', true],
+  ['02', '#/guide', 'compass', 'ROTEIRO COMPLETO', 'Guia Passo a Passo (A0 → B1)', 'Sequência de 19 passos estruturados para quem quer um caminho claro sem se perder.', true],
+  ['03', '#/tutor', 'chat', 'CONVERSAÇÃO', 'Tutor com IA (Camille)', 'Diálogos práticos em situações reais: café, hotel, transporte e dia a dia.', true],
+  ['04', '#/speed', 'zap', 'DESAFIO RÁPIDO', 'Treino Relâmpago 60s', 'Jogo de reflexo rápido para associar palavras contra o relógio.', true],
+  ['05', '#/reader', 'book', 'LEITURA', 'Leitor Graduado', 'Textos e contos em francês com tradução ao toque e áudio narrado.', false],
+  ['06', '#/bridges', 'bridge', 'COMPARAÇÃO', 'Pontes PT → FR → EN', 'Padrões de semelhança entre as línguas e lista de falsos amigos para não errar.', false],
+  ['07', '#/verbs', 'table', 'GRAMÁTICA', 'Conjugador de Verbos', 'Tabelas completas dos principais verbos franceses em todos os tempos.', false],
+  ['08', '#/listen', 'headphones', 'COMPREENSÃO', 'Ditado Auditivo', 'Treine seu ouvido escutando nativos e escrevendo o que ouviu.', false],
+  ['09', '#/shadow', 'waves', 'RITMO & ENTONAÇÃO', 'Treino de Shadowing', 'Pratique a melodia e o ritmo natural do francês repetindo junto com nativos.', false],
+  ['10', '#/phrases', 'bubble', 'SITUAÇÕES REAIS', 'Guia de Frases', 'Expressões práticas para viagens, restaurantes, aeroporto e trabalho.', false],
+  ['11', '#/decks', 'layers', 'VOCABULÁRIO', 'Temas & Baralhos', 'Mais de 500 palavras agrupadas por temas como comida, viagem e tecnologia.', false],
+  ['12', '#/lessons', 'book', 'ESTRUTURA', 'Aulas de Gramática', 'Explicações claras e contrastivas com foco em quem fala português.', false],
+  ['13', '#/stats', 'trophy', 'DESEMPENHO', 'Conquistas & Métricas', 'Veja seu tempo de estudo, total de palavras dominadas e medalhas.', false],
+  ['14', '#/settings', 'gauge', 'CONFIGURAÇÕES', 'Ajustes do Aplicativo', 'Escolha a voz nativa, personalize a velocidade do áudio e ajuste suas metas.', false],
 ];
 
 const MEDIA = [
-  ['PODCAST · A2–B1', 'InnerFrench', 'Francês articulado e reflexivo sobre sociedade, história e cultura.', 'https://innerfrench.com/'],
-  ['RADIO · QUOTIDIEN', 'Journal en français facile (RFI)', 'Noticiário internacional diário em francês claro com transcrição integral.', 'https://francaisfacile.rfi.fr/'],
-  ['VIDÉO · EXERCICES', 'TV5Monde — Apprendre', 'Reportagens francófonas autênticas acompanhadas de fichas interativas.', 'https://apprendre.tv5monde.com/'],
-  ['DOCUMENTAIRE · RUE', 'Easy French', 'Conversas espontâneas nas ruas de Paris e Montreal com dupla legenda.', 'https://www.youtube.com/@EasyFrench'],
+  ['PODCAST · A2–B1', 'InnerFrench', 'Francês articulado e claro sobre sociedade, história e cultura francesa.', 'https://innerfrench.com/'],
+  ['NOTÍCIAS · DIÁRIO', 'Journal en français facile (RFI)', 'Noticiário do mundo todo em francês acessível com transcrição completa.', 'https://francaisfacile.rfi.fr/'],
+  ['VÍDEO · EDUCATIVO', 'TV5Monde — Apprendre', 'Vídeos autênticos com exercícios interativos para todos os níveis.', 'https://apprendre.tv5monde.com/'],
+  ['ENTREVISTAS · COTIDIANO', 'Easy French', 'Conversas espontâneas nas ruas de Paris e Montreal com legendas duplas.', 'https://www.youtube.com/@EasyFrench'],
 ];
 
 export default function render(root) {
   mount(root, html`
-    <section class="editorial-mast">
-      <div class="mast-meta">
-        <span class="mast-issue">INSTRUMENTARIUM</span>
-        <span class="mast-sep">◆</span>
-        <span class="mast-date">13 MODULES D'EXCELLENCE</span>
+    <header style="margin-bottom:28px;padding-top:8px">
+      <div class="row" style="gap:8px;margin-bottom:6px;align-items:center">
+        <span class="tag ok">BIBLIOTECA COMPLETA</span>
+        <span class="small muted">Todos os recursos em um só lugar</span>
       </div>
-      <div class="mast-headline">
-        <h1 class="h1">L'Atelier <span class="grad-text">Pont</span><em>.</em></h1>
-        <p class="mast-sub">Todas as ferramentas de engenharia cognitiva, fonética acústica e imersão reunidas em um único espaço.</p>
-      </div>
-    </section>
+      <h1 class="h1" style="font-size:clamp(1.7rem, 1.3rem + 1.6vw, 2.3rem);margin:0 0 6px">
+        Explorar Ferramentas
+      </h1>
+      <p class="small muted" style="margin:0;font-size:1.02rem;max-width:65ch">
+        Acesse módulos especializados para praticar vocabulário, treinar pronúncia no microfone, conjugar verbos e mergulhar na cultura francófona.
+      </p>
+    </header>
 
     <div class="bento-grid-3">
       ${TOOLS.map(([idx, href, ic, tag, title, desc, feat]) => html`
-        <a class="bento-item ${feat ? 'featured' : ''}" href="${href}">
-          <div class="bi-head">
-            <span class="bi-idx">${idx}</span>
-            <span class="bi-ico">${icon(ic)}</span>
+        <a class="card link stack-sm ${feat ? 'featured' : ''}" href="${href}" style="background:var(--surface);padding:22px;justify-content:space-between">
+          <div>
+            <div class="row between" style="margin-bottom:12px">
+              <span class="tag ${feat ? 'ok' : 'fr'}">${tag}</span>
+              <span class="small muted">${icon(ic)}</span>
+            </div>
+            <h3 class="h3" style="color:var(--text-strong);font-size:1.15rem;margin:0 0 6px">${title}</h3>
+            <p class="small muted" style="margin:0;line-height:1.5">${desc}</p>
           </div>
-          <div class="bi-body">
-            <div class="bi-tag">${tag}</div>
-            <h3 class="bi-title">${title}</h3>
-            <p class="bi-desc">${desc}</p>
-          </div>
-          <div class="bi-foot">
-            <span>Abrir instrumento</span>
-            <span class="bi-arrow">→</span>
+          <div class="row between" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:0.88rem;color:var(--primary);font-weight:600">
+            <span>Acessar</span>
+            <span>→</span>
           </div>
         </a>
       `)}
     </div>
 
-    <div class="section-header" style="margin-top:38px">
-      <div>
-        <span class="eyebrow">CULTURE FRANCOPHONE</span>
-        <h2>Imersão Curada</h2>
+    <div style="margin-top:40px;margin-bottom:16px">
+      <div class="row" style="gap:8px;margin-bottom:4px">
+        <span class="tag fr">IMERSÃO CULTURAL</span>
+        <span class="small muted">Canais e podcasts recomendados</span>
       </div>
-      <span class="small faint">Fontes externas recomendadas</span>
+      <h2 class="h2" style="font-size:1.4rem;margin:0">Fontes Externas para Ouvir Natos</h2>
     </div>
 
     <div class="bento-grid-2">
       ${MEDIA.map(([tag, title, desc, url]) => html`
-        <a class="card link stack-sm" href="${url}" target="_blank" rel="noopener">
+        <a class="card link stack-sm" href="${url}" target="_blank" rel="noopener" style="background:var(--surface);padding:20px">
           <div class="row between">
-            <span class="bento-index">${tag}</span>
+            <span class="tag ok">${tag}</span>
             ${icon('globe')}
           </div>
-          <div class="h3 fr" style="font-size:1.25rem;color:#fff">${title}</div>
-          <p class="small muted">${desc}</p>
+          <div class="h3" style="font-size:1.18rem;color:var(--text-strong);margin:4px 0 2px">${title}</div>
+          <p class="small muted" style="margin:0">${desc}</p>
         </a>
       `)}
     </div>
 
-    <div class="callout tip" style="margin-top:20px">
-      <span class="ci">✦</span>
-      <div><b>Segredo de Imersão Passiva:</b> altere o idioma do seu smartphone e da sua conta de streaming para francês (séries como <i>Lupin</i>, <i>Dix pour cent</i> e <i>Le Bureau des légendes</i>). Como você já domina a interface, seu cérebro absorve o vocabulário funcional sem esforço.</div>
+    <div class="callout tip" style="margin-top:24px">
+      <span class="ci">💡</span>
+      <div><b>Dica de Imersão:</b> altere o idioma do seu smartphone ou aplicativo de streaming para francês (como assistir séries com áudio em francês e legenda em francês ou português). O contato diário acelera a absorção sem esforço.</div>
     </div>
   `);
 }
